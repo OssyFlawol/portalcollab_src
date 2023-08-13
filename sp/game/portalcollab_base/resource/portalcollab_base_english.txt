@@ -1,0 +1,38 @@
+"lang"
+{
+"Language" "english"
+"Tokens"
+{
+
+"pcollab_chapter1_title"	                 "aaaaaa"
+
+"hint_get_portal_1"		"%+attack% TO PLACE THE BLUE PORTAL"
+"hint_get_portal_2"		"%+attack2% TO PLACE THE ORANGE PORTAL"
+"hint_use_items"		"%+use% TO PICKUP AN OBJECT"
+"hint_drop_items"		"%+use% TO DROP AN OBJECT"
+"hint_use_switches"		"%+use% TO USE"
+"hint_duck"			"%+duck% TO CROUCH"
+"hint_move_ctrls"		"FORWARD %+forward%BACK %+back%LEFT %+moveleft%RIGHT %+moveright%"
+"hint_jump"			"%+jump% TO JUMP"
+
+"HL2_Enable_Commentary"		"Enable commentary track"
+
+"hl2_AmmoFull"			"FULL"
+
+"Portal_Portalgun"	"PORTAL GUN"
+"HL2_357Handgun"	".357 MAGNUM"
+"HL2_Pulse_Rifle"	"OVERWATCH STANDARD ISSUE\n(PULSE-RIFLE)"
+"HL2_Bugbait"		"PHEROPOD\n(BUGBAIT)"
+"HL2_Crossbow"		"CROSSBOW"
+"HL2_Crowbar"		"CROWBAR"
+"HL2_Grenade"		"GRENADE"
+"HL2_GravityGun"	"ZERO-POINT ENERGY GUN\n(GRAVITY GUN)"
+"HL2_Pistol"		"9MM PISTOL"
+"HL2_RPG"		"RPG\n(ROCKET PROPELLED GRENADE)"
+"HL2_Shotgun"		"SHOTGUN"
+"HL2_SMG1"		"SMG\n(SUBMACHINE GUN)"
+
+"Portal_Saved"		"Saved..."
+
+}
+}
