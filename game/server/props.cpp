@@ -2413,6 +2413,8 @@ BEGIN_DATADESC( CPhysicsProp )
 
 	DEFINE_INPUTFUNC( FIELD_VOID, "EnableMotion", InputEnableMotion ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "DisableMotion", InputDisableMotion ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "EnableMotionKeepVelocity", InputEnableMotionKeepVelocity ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "DisableMotionKeepVelocity", InputDisableMotionKeepVelocity ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "Wake", InputWake ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "Sleep", InputSleep ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "DisableFloating", InputDisableFloating ),
@@ -2669,6 +2671,29 @@ void CPhysicsProp::InputSleep( inputdata_t &inputdata )
 	if ( pPhysicsObject != NULL )
 	{
 		pPhysicsObject->Sleep();
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Enable physics motion and collision response (on by default) WITH VELOCITY
+//-----------------------------------------------------------------------------
+void CPhysicsProp::InputEnableMotionKeepVelocity( inputdata_t& inputdata )
+{
+	IPhysicsObject* pPhysicsObject = VPhysicsGetObject();
+	EnableMotion();
+	pPhysicsObject->SetVelocity(&m_velocity, &m_impulse);
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Disable any physics motion or collision response WITH VELOCITY
+//-----------------------------------------------------------------------------
+void CPhysicsProp::InputDisableMotionKeepVelocity( inputdata_t& inputdata )
+{
+	IPhysicsObject* pPhysicsObject = VPhysicsGetObject();
+	if ( pPhysicsObject != NULL )
+	{
+		pPhysicsObject->GetVelocity( &m_velocity, &m_impulse );
+		pPhysicsObject->EnableMotion( false );
 	}
 }
 

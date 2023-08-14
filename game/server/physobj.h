@@ -76,6 +76,8 @@ public:
 	void InputDisableMotion( inputdata_t &inputdata );
 	void InputForceDrop( inputdata_t &inputdata );
 	void InputDisableFloating( inputdata_t &inputdata );
+	void InputEnableMotionKeepVelocity( inputdata_t& inputdata );
+	void InputDisableMotionKeepVelocity( inputdata_t& inputdata );
 
 	DECLARE_DATADESC();
 	
@@ -87,6 +89,8 @@ protected:
 	float			m_flForceToEnableMotion;
 	QAngle			m_angPreferredCarryAngles;
 	bool			m_bNotSolidToWorld;
+	Vector m_velocity;
+	AngularImpulse m_impulse;
 
 	// Outputs
 	COutputEvent	m_OnDamaged;

@@ -352,6 +352,9 @@ public:
 	void InputDisableMotion( inputdata_t &inputdata );
 	void InputDisableFloating( inputdata_t &inputdata );
 
+	void InputEnableMotionKeepVelocity( inputdata_t& inputdata );
+	void InputDisableMotionKeepVelocity( inputdata_t& inputdata );
+
 	void EnableMotion( void );
 	bool CanBePickedUpByPhyscannon( void );
 	void OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t reason );
@@ -392,6 +395,9 @@ private:
 	COutputEvent m_OnPlayerUse;
 	COutputEvent m_OnPlayerPickup;
 	COutputEvent m_OnOutOfWorld;
+
+	Vector m_velocity;
+	AngularImpulse m_impulse;
 
 	float		m_massScale;
 	float		m_inertiaScale;
