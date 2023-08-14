@@ -101,6 +101,9 @@ ConVar r_flashlightdepthres( "r_flashlightdepthres", "1024" );
 
 ConVar r_threaded_client_shadow_manager( "r_threaded_client_shadow_manager", "0" );
 
+// Change this if you want to up the projected texture limit.
+#define MAX_PROJ_TEXTURE 4
+
 #ifdef _WIN32
 #pragma warning( disable: 4701 )
 #endif
@@ -1291,7 +1294,7 @@ bool CClientShadowMgr::Init()
 	SetShadowBlobbyCutoffArea( 0.005 );
 
 	bool bTools = CommandLine()->CheckParm( "-tools" ) != NULL;
-	m_nMaxDepthTextureShadows = bTools ? 4 : 1;	// Just one shadow depth texture in games, more in tools
+	m_nMaxDepthTextureShadows = bTools ? 4 : MAX_PROJ_TEXTURE;	// Just one shadow depth texture in games, more in tools
 
 	bool bLowEnd = ( g_pMaterialSystemHardwareConfig->GetDXSupportLevel() < 80 );
 

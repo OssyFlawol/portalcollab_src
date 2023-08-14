@@ -229,7 +229,7 @@ void C_EnvProjectedTexture::UpdateLight( bool bForceUpdate )
 
 void C_EnvProjectedTexture::Simulate( void )
 {
-	UpdateLight( false );
+	UpdateLight( GetMoveParent() != NULL );
 
 	BaseClass::Simulate();
 }
