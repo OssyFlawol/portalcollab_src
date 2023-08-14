@@ -86,6 +86,7 @@ GameInfo.txt
 *.mdl
 *.phy
 *.vtx
+*.vvd
 portalcollab_base_english.txt
 hudanimations.txt
 *.res
