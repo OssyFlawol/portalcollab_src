@@ -77,3 +77,16 @@ capt_compile.bat
 *.lib
 /.vs/VSWorkspaceState.json
 /sp/src/.vs
+
+# game folder files
+GameInfo.txt
+*.cfg
+*.vmt
+*.vtf
+*.mdl
+*.phy
+*.vtx
+portalcollab_base_english.txt
+hudanimations.txt
+*.res
+
