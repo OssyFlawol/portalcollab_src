@@ -1514,6 +1514,9 @@ void C_Portal_Player::CalcPortalView( Vector &eyeOrigin, QAngle &eyeAngles )
 	VectorCopy( EyePosition(), eyeOrigin );
 	VectorCopy( EyeAngles(), eyeAngles );
 
+	// Viewpunch fix
+	VectorAdd(eyeAngles, m_Local.m_vecPunchAngle, eyeAngles);
+
 	//Re-apply the screenshake (we just stomped it)
 	vieweffects->ApplyShake( eyeOrigin, eyeAngles, 1.0 );
 

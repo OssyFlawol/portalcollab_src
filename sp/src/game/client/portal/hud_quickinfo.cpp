@@ -198,6 +198,10 @@ void CHUDQuickInfo::Paint()
 	if ( pWeapon == NULL )
 		return;
 
+	// Only show this crosshair if portalgun is active weapon
+	if (!FClassnameIs(pWeapon, "weapon_portalgun"))
+		return;
+
 	int		xCenter	= ( ScreenWidth() - m_icon_c->Width() ) / 2;
 	int		yCenter = ( ScreenHeight() - m_icon_c->Height() ) / 2;
 

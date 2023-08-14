@@ -4200,6 +4200,9 @@ void CTriggerPlayerMovement::StartTouch( CBaseEntity *pOther )
 
 	if ( HasSpawnFlags( SF_TRIGGER_AUTO_DUCK ) )
 	{
+#ifdef PORTAL
+		pPlayer->forcedDuck = true; // Necessary to force Portal player to duck
+#endif
 		pPlayer->ForceButtons( IN_DUCK );
 	}
 
@@ -4222,6 +4225,9 @@ void CTriggerPlayerMovement::EndTouch( CBaseEntity *pOther )
 
 	if ( HasSpawnFlags( SF_TRIGGER_AUTO_DUCK ) )
 	{
+#ifdef PORTAL
+		pPlayer->forcedDuck = false;
+#endif
 		pPlayer->UnforceButtons( IN_DUCK );
 	}
 

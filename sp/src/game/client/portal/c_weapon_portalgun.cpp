@@ -206,6 +206,12 @@ void C_WeaponPortalgun::Spawn( void )
 //-----------------------------------------------------------------------------
 void C_WeaponPortalgun::StartEffects( void )
 {
+	if (!GetOwner())
+		return;
+
+	if (GetOwner()->GetActiveWeapon() != this)
+		return;
+
 	int i;
 
 	CBaseEntity *pModelView = ( ( GetOwner() ) ? ( ToBasePlayer( GetOwner() )->GetViewModel() ) : ( 0 ) );
@@ -812,10 +818,10 @@ void C_WeaponPortalgun::ClientThink( void )
 				m_Parameters[PORTALGUN_PORTAL2LIGHT_WORLD].SetVisible3rdPerson( m_iLastFiredPortal == 2 );
 			}
 		}
-	}
 
-	// Update our effects
-	DoEffectIdle();
+		// Update our effects
+		DoEffectIdle();
+	}
 
 	NetworkStateChanged();
 }

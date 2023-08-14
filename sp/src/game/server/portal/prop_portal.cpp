@@ -557,9 +557,12 @@ void CProp_Portal::DoFizzleEffect( int iEffect, bool bDelayedPos /*= true*/ )
 			if ( !m_bIsPortal2 )
 			{
 				Vector vLinkedForward;
-				m_hLinkedPortal->GetVectors( &vLinkedForward, NULL, NULL );
-				fxData.m_vOrigin = m_hLinkedPortal->GetAbsOrigin() + vLinkedForward * 16.0f;
-				fxData.m_vAngles = m_hLinkedPortal->GetAbsAngles();
+				if (m_hLinkedPortal)
+				{
+					m_hLinkedPortal->GetVectors(&vLinkedForward, NULL, NULL);
+					fxData.m_vOrigin = m_hLinkedPortal->GetAbsOrigin() + vLinkedForward * 16.0f;
+					fxData.m_vAngles = m_hLinkedPortal->GetAbsAngles();
+				}
 			}
 			else
 			{
@@ -581,9 +584,12 @@ void CProp_Portal::DoFizzleEffect( int iEffect, bool bDelayedPos /*= true*/ )
 			if ( m_bIsPortal2 )
 			{
 				Vector vLinkedForward;
-				m_hLinkedPortal->GetVectors( &vLinkedForward, NULL, NULL );
-				fxData.m_vOrigin = m_hLinkedPortal->GetAbsOrigin() + vLinkedForward * 16.0f;
-				fxData.m_vAngles = m_hLinkedPortal->GetAbsAngles();
+				if (m_hLinkedPortal)
+				{
+					m_hLinkedPortal->GetVectors(&vLinkedForward, NULL, NULL);
+					fxData.m_vOrigin = m_hLinkedPortal->GetAbsOrigin() + vLinkedForward * 16.0f;
+					fxData.m_vAngles = m_hLinkedPortal->GetAbsAngles();
+				}
 			}
 			else
 			{

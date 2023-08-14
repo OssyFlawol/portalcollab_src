@@ -168,7 +168,9 @@ void CTriggerPortalCleanser::Touch( CBaseEntity *pOther )
 
 				if ( bFizzledPortal )
 				{
-					pPortalgun->SendWeaponAnim( ACT_VM_FIZZLE );
+					// Do fizzle activity only if portalgun is active weapon
+					if (pPlayer->GetActiveWeapon() == pPortalgun)
+						pPortalgun->SendWeaponAnim(ACT_VM_FIZZLE);
 					pPortalgun->SetLastFiredPortal( 0 );
 					m_OnFizzle.FireOutput( pOther, this );
 					pPlayer->RumbleEffect( RUMBLE_RPG_MISSILE, 0, RUMBLE_FLAG_RESTART );

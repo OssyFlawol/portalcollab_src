@@ -152,7 +152,9 @@ void CPortalGameMovement::ProcessMovement( CBasePlayer *pPlayer, CMoveData *pMov
 	g_bForcePortalTrace = false;
 
 #ifndef CLIENT_DLL
-	pPlayer->UnforceButtons( IN_DUCK );
+	// Prevent unforcing crouch if it's supposed to be forced by a trigger_playermovement
+	if (!pPlayer->forcedDuck)
+		pPlayer->UnforceButtons( IN_DUCK );
 	pPlayer->UnforceButtons( IN_JUMP );
 #endif
 

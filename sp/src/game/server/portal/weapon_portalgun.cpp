@@ -108,8 +108,12 @@ void CWeaponPortalgun::Activate()
 	if ( pPlayer )
 	{
 		CBaseEntity *pHeldObject = GetPlayerHeldEntity( pPlayer );
-		OpenProngs( ( pHeldObject ) ? ( false ) : ( true ) );
-		OpenProngs( ( pHeldObject ) ? ( true ) : ( false ) );
+		// Open prongs only if portal gun is active weapon
+		if (pPlayer->GetActiveWeapon() == this)
+		{
+			OpenProngs((pHeldObject) ? (false) : (true));
+			OpenProngs((pHeldObject) ? (true) : (false));
+		}
 
 		if( GameRules()->IsMultiplayer() )
 			m_iPortalLinkageGroupID = pPlayer->entindex();
@@ -231,6 +235,10 @@ void CWeaponPortalgun::Think( void )
 		if ( m_fEffectsMaxSize2 < 4.0f )
 			m_fEffectsMaxSize2 = 4.0f;
 	}
+
+	// Re-send the pickup anim if our prongs are still open after the fizzle anim ends
+	if (m_bOpenProngs && GetIdealActivity() == ACT_VM_FIZZLE && IsViewModelSequenceFinished())
+		SendWeaponAnim(ACT_VM_PICKUP);
 }
 
 void CWeaponPortalgun::OpenProngs( bool bOpenProngs )
@@ -364,7 +372,7 @@ float CWeaponPortalgun::TraceFirePortal( bool bPortal2, const Vector &vTraceStar
 			// If shooting out of the world, fizzle
 			if ( !bTest )
 			{
-				CProp_Portal *pPortal = CProp_Portal::FindPortal( m_iPortalLinkageGroupID, bPortal2, true );
+				CProp_Portal *pPortal = CProp_Portal::FindPortal( pNearPortal->GetLinkageGroup(), bPortal2, true );
 
 				pPortal->m_iDelayedFailure = ( ( pNearPortal->m_bIsPortal2 ) ? ( PORTAL_FIZZLE_NEAR_RED ) : ( PORTAL_FIZZLE_NEAR_BLUE ) );
 				VectorAngles( vPortalForward, pPortal->m_qDelayedAngles );
@@ -417,7 +425,7 @@ float CWeaponPortalgun::TraceFirePortal( bool bPortal2, const Vector &vTraceStar
 	for ( int i = 0; i < nCount; i++ )
 	{
 		// If the entity is a rotating door
-		if( FClassnameIs( list[i], "prop_door_rotating" ) )
+		/*if( FClassnameIs( list[i], "prop_door_rotating" ) )
 		{
 			// Check more precise door collision
 			CBasePropDoor *pRotatingDoor = static_cast<CBasePropDoor *>( list[i] );
@@ -457,7 +465,7 @@ float CWeaponPortalgun::TraceFirePortal( bool bPortal2, const Vector &vTraceStar
 				return PORTAL_ANALOG_SUCCESS_CANT_FIT;
 			}
 		}
-		else if ( FClassnameIs( list[i], "trigger_portal_cleanser" ) )
+		else*/ if ( FClassnameIs( list[i], "trigger_portal_cleanser" ) )
 		{
 			CBaseTrigger *pTrigger = static_cast<CBaseTrigger*>( list[i] );
 
@@ -529,6 +537,9 @@ float CWeaponPortalgun::FirePortal( bool bPortal2, Vector *pVector /*= 0*/, bool
 		AngleVectors( pPlayer->EyeAngles(), &forward, &right, &up );
 		pPlayer->EyeVectors( &vDirection, NULL, NULL );
 		vEye = pPlayer->EyePosition();
+
+		CBasePlayer *pBasePlayer = ToBasePlayer(pOwner);
+		vDirection = pBasePlayer->GetAutoaimVector(AUTOAIM_SCALE_DEFAULT);
 
 		// Check if the players eye is behind the portal they're in and translate it
 		VMatrix matThisToLinked;

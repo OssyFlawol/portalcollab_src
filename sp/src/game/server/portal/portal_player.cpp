@@ -303,7 +303,8 @@ void CPortal_Player::Precache( void )
 	PrecacheModel( g_pszPlayerModel );
 	PrecacheModel( g_pszChellModel );
 
-	PrecacheScriptSound( "NPC_Citizen.die" );
+	PrecacheScriptSound("PortalPlayer.BonkYelp");
+	PrecacheScriptSound("PortalPlayer.PainYelp");
 }
 
 void CPortal_Player::CreateSounds()
@@ -1816,7 +1817,7 @@ int CPortal_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 	}
 	else if ( ( inputInfoCopy.GetDamageType() & DMG_SHOCK ) || ( inputInfoCopy.GetDamageType() & DMG_BURN ) )
 	{
-		EmitSound( "PortalPortal.PainYelp" );
+		EmitSound( "PortalPlayer.PainYelp" );
 	}
 
 	int ret = BaseClass::OnTakeDamage( inputInfoCopy );

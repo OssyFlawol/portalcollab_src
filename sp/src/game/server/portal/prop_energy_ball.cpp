@@ -219,7 +219,7 @@ void CPropEnergyBall::VPhysicsCollision( int index, gamevcollisionevent_t *pEven
 	if ( !bIsEnteringPortalAndLockingAxisForward )
 	{
 		trace_t		tr;
-		UTIL_TraceLine ( GetAbsOrigin(), GetAbsOrigin() + 60*preVelocity, MASK_SHOT, 
+		UTIL_TraceLine ( GetAbsOrigin(), GetAbsOrigin() + 60*preVelocity, MASK_SHOT_HULL, 
 			this, COLLISION_GROUP_NONE, &tr);
 
 		// Only place decals and draw effects if we hit something valid
@@ -337,6 +337,9 @@ void CPropEnergyBall::Think()
 //-----------------------------------------------------------------------------
 void CPropEnergyBall::ExplodeThink( )
 {
+	if (GetMoveType() == MOVETYPE_NONE)
+		return;
+
 	// Tell the respawner to make a new one
 	if ( GetSpawner() )
 	{

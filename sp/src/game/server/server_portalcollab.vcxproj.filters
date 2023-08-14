@@ -3686,7 +3686,7 @@
     <CustomBuild Include="..\..\public\tier0\pointeroverride.asm">
       <Filter>Source Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="server_portalcollab_base.vpc">
+    <CustomBuild Include="server_portalcollab.vpc">
       <Filter>VPC Scripts</Filter>
     </CustomBuild>
   </ItemGroup>

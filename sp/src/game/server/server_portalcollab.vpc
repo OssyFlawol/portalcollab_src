@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------------
 
 $Macro SRCDIR		"..\.."
-$Macro GAMENAME 	"portalcollab_base"
+$Macro GAMENAME 	"portalcollab"
 
 $Include "$SRCDIR\game\server\server_base.vpc"
 
