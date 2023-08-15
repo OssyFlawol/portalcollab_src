@@ -415,6 +415,7 @@ protected:
 
 public:
 	COutputEvent m_OnIgnite;
+	COutputEvent OnDissolved;
 
 private:
 	CStudioHdr			*m_pStudioHdr;

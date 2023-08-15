@@ -975,6 +975,26 @@ bool CHud::IsHidden( int iHudFlags )
 	if ( ( iHudFlags & HIDEHUD_NEEDSUIT ) && ( !pPlayer->IsSuitEquipped() ) )
 		return true;
 
+	// Hide if we have only one weapon
+	if (iHudFlags & HIDEHUD_SINGLEWEAPON)
+	{
+		int numWeapons = 0;
+		for (int i = 0; i < MAX_WEAPONS; i++)
+		{
+			C_BaseCombatWeapon *pWeapon = pPlayer->GetWeapon(i);
+
+			if (pWeapon)
+				numWeapons++;
+
+			// We can stop if we know we have at least two weapons
+			if (numWeapons > 1)
+				break;
+		}
+
+		if (numWeapons <= 1)
+			return true;
+	}
+
 	// Hide all HUD elements during screenshot if the user's set hud_freezecamhide ( TF2 )
 #if defined( TF_CLIENT_DLL )
 	extern bool IsTakingAFreezecamScreenshot();

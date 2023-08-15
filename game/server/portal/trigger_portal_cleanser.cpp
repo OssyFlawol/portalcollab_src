@@ -266,6 +266,8 @@ void CTriggerPortalCleanser::Touch( CBaseEntity *pOther )
 			pDisolvingAnimating->Dissolve( "", gpGlobals->curtime, false, ENTITY_DISSOLVE_NORMAL );
 		}
 
+		pBaseAnimating->OnDissolved.FireOutput(pBaseAnimating, pBaseAnimating);
+
 		m_OnDissolve.FireOutput( pOther, this );
 	}
 }

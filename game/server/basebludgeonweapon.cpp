@@ -21,6 +21,8 @@
 #include "te_effect_dispatch.h"
 #include "rumble_shared.h"
 #include "gamestats.h"
+#include "portal_util_shared.h"
+#include "prop_portal.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -153,6 +155,20 @@ void CBaseHLBludgeonWeapon::Hit( trace_t &traceHit, Activity nHitActivity, bool 
 		Vector hitDirection;
 		pPlayer->EyeVectors( &hitDirection, NULL, NULL );
 		VectorNormalize( hitDirection );
+
+		Vector start = pPlayer->Weapon_ShootPosition();
+		Vector forward = pPlayer->GetAutoaimVector(AUTOAIM_SCALE_DEFAULT, GetRange());
+
+		Ray_t rayPortal;
+		rayPortal.Init(start, start + forward * GetRange());
+		float mustBeCloserThan = 2.0f;
+		CProp_Portal *portalTest = UTIL_Portal_FirstAlongRay(rayPortal, mustBeCloserThan);
+
+		// Translate hit direction through portal
+		if (portalTest)
+		{
+			UTIL_Portal_VectorTransform(portalTest->MatrixThisToLinked(), hitDirection, hitDirection);
+		}
 
 		CTakeDamageInfo info( GetOwner(), GetOwner(), GetDamageForActivity( nHitActivity ), DMG_CLUB );
 
@@ -306,7 +322,11 @@ void CBaseHLBludgeonWeapon::Swing( int bIsSecondary )
 	forward = pOwner->GetAutoaimVector( AUTOAIM_SCALE_DEFAULT, GetRange() );
 
 	Vector swingEnd = swingStart + forward * GetRange();
-	UTIL_TraceLine( swingStart, swingEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit );
+	//UTIL_TraceLine( swingStart, swingEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit );
+	Ray_t ray;
+	ray.Init(swingStart, swingEnd);
+	g_bBulletPortalTrace = true;
+	UTIL_Portal_TraceRay(ray, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit);
 	Activity nHitActivity = ACT_VM_HITCENTER;
 
 	// Like bullets, bludgeon traces have to trace against triggers.
@@ -322,7 +342,10 @@ void CBaseHLBludgeonWeapon::Swing( int bIsSecondary )
 		// Back off by hull "radius"
 		swingEnd -= forward * bludgeonHullRadius;
 
-		UTIL_TraceHull( swingStart, swingEnd, g_bludgeonMins, g_bludgeonMaxs, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit );
+		//UTIL_TraceHull( swingStart, swingEnd, g_bludgeonMins, g_bludgeonMaxs, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit );
+		Ray_t rayHull;
+		rayHull.Init(swingStart, swingEnd, g_bludgeonMins, g_bludgeonMaxs);
+		UTIL_Portal_TraceRay(rayHull, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit);
 		if ( traceHit.fraction < 1.0 && traceHit.m_pEnt )
 		{
 			Vector vecToTarget = traceHit.m_pEnt->GetAbsOrigin() - swingStart;
@@ -342,6 +365,8 @@ void CBaseHLBludgeonWeapon::Swing( int bIsSecondary )
 			}
 		}
 	}
+
+	g_bBulletPortalTrace = false;
 
 	if ( !bIsSecondary )
 	{

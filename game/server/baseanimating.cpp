@@ -205,6 +205,7 @@ BEGIN_DATADESC( CBaseAnimating )
 	DEFINE_INPUTFUNC( FIELD_STRING, "SetLightingOriginHack", InputSetLightingOriginRelative ),
 	DEFINE_INPUTFUNC( FIELD_STRING, "SetLightingOrigin", InputSetLightingOrigin ),
 	DEFINE_OUTPUT( m_OnIgnite, "OnIgnite" ),
+	DEFINE_OUTPUT(OnDissolved, "OnDissolved"),
 
 	DEFINE_INPUT( m_fadeMinDist, FIELD_FLOAT, "fademindist" ),
 	DEFINE_INPUT( m_fadeMaxDist, FIELD_FLOAT, "fademaxdist" ),
@@ -3462,6 +3463,8 @@ bool CBaseAnimating::Dissolve( const char *pMaterialName, float flStartTime, boo
 			gameeventmanager->FireEvent( event );
 		}
 	}
+
+	OnDissolved.FireOutput(this, this);
 
 	return bRagdollCreated;
 }
