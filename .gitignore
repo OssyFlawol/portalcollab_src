@@ -19,7 +19,7 @@ ipch
 *.idb
 *.vcxproj
 *.sln
-*.vpc_crc
+*.vcxproj.vpc_crc
 
 # OSX/Linux build products
 *.mak
