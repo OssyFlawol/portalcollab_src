@@ -224,7 +224,26 @@ const char *g_ppszPortalMPModels[] =
 {
 	"models/player/Chell.mdl",
 	"models/player/Mel.mdl",
-	"models/player/male_portal_player.mdl"
+	"models/player/male_portal_player.mdl",
+	"models/player/retail_quinton.mdl",			//not implemented yet
+	"models/player/subject/male_01.mdl",
+	"models/player/subject/male_02.mdl",
+	"models/player/subject/male_03.mdl",
+	"models/player/subject/male_04.mdl",
+	"models/player/subject/male_05.mdl",
+	"models/player/subject/male_06.mdl",
+	"models/player/subject/male_07.mdl",
+	"models/player/subject/male_08.mdl",
+	"models/player/subject/male_09.mdl",
+	"models/player/subject/female_01.mdl",
+	"models/player/subject/female_02.mdl",
+	"models/player/subject/female_03.mdl",
+	"models/player/subject/female_04.mdl",
+	"models/player/subject/female_06.mdl",
+	"models/player/subject/female_07.mdl",
+	"models/player/subject/male_trav.mdl",		//not implemented yet
+	"models/player/subject/male_warren.mdl",	//not implemented yet
+	"models/player/subject/male_kel.mdl"		//not implemented yet
 };
 
 
