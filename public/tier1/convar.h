@@ -476,7 +476,9 @@ public:
 	void SetValue( bool bValue );
 
 	const char *GetName() const;
-
+	
+	bool		GetMin( float& minVal ) const;
+	bool		GetMax( float& maxVal ) const;
 	const char *GetDefault() const;
 
 private:
@@ -554,6 +556,16 @@ FORCEINLINE_CVAR void ConVarRef::SetValue( bool bValue )
 FORCEINLINE_CVAR const char *ConVarRef::GetDefault() const
 {
 	return m_pConVarState->m_pszDefaultValue;
+}
+
+FORCEINLINE_CVAR bool ConVarRef::GetMin(float& minVal) const
+{
+	return m_pConVarState->GetMin(minVal);
+}
+
+FORCEINLINE_CVAR bool ConVarRef::GetMax(float& maxVal) const
+{
+	return m_pConVarState->GetMax(maxVal);
 }
 
 

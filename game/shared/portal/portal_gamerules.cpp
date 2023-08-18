@@ -1160,6 +1160,38 @@ bool CPortalGameRules::ShouldUseRobustRadiusDamage(CBaseEntity *pEntity)
 	return true;
 }
 
+void CPortalGameRules::ClientSettingsChanged(CBasePlayer *pPlayer)
+{
+#ifndef CLIENT_DLL
+	CPortal_Player *pPortalPlayer = ToPortalPlayer(pPlayer);
+
+	if (pPortalPlayer == NULL)
+		return;
+
+	const char *pCurrentModel = modelinfo->GetModelName(pPlayer->GetModel());
+	const char *szModelName = engine->GetClientConVarValue(engine->IndexOfEdict(pPlayer->edict()), "cl_playermodel");
+
+	//If we're different.
+	if (stricmp(szModelName, pCurrentModel))
+	{
+		if (PortalGameRules()->IsTeamplay() == false)
+		{
+			pPortalPlayer->SetPlayerModel();
+
+			const char *pszCurrentModelName = modelinfo->GetModelName(pPortalPlayer->GetModel());
+
+			char szReturnString[128];
+			Q_snprintf(szReturnString, sizeof(szReturnString), "Your player model is: %s\n", pszCurrentModelName);
+
+			ClientPrint(pPortalPlayer, HUD_PRINTTALK, szReturnString);
+		}
+	}
+
+	BaseClass::ClientSettingsChanged(pPlayer);
+#endif
+
+}
+
 #ifndef CLIENT_DLL
 //---------------------------------------------------------
 //---------------------------------------------------------

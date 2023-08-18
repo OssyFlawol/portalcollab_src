@@ -5316,10 +5316,13 @@ void CC_Ent_FireTarget( const CCommand& args )
 }
 static ConCommand firetarget("firetarget", CC_Ent_FireTarget, 0, FCVAR_CHEAT);
 
+// This should be defined in utlstring.h - Wonderland_War
+#if 0
 static bool UtlStringLessFunc( const CUtlString &lhs, const CUtlString &rhs )
 {
 	return Q_stricmp( lhs.String(), rhs.String() ) < 0;
 }
+#endif
 
 class CEntFireAutoCompletionFunctor : public ICommandCallback, public ICommandCompletionCallback
 {
