@@ -217,7 +217,6 @@ enum
 {
 	MODEL_CHELL,
 	MODEL_MEL,
-	MODEL_ABBY,
 	MODEL_MALE_PORTAL_PLAYER
 };
 
@@ -225,7 +224,6 @@ const char *g_ppszPortalMPModels[] =
 {
 	"models/player/Chell.mdl",
 	"models/player/Mel.mdl",
-	"models/player/Abby.mdl",
 	"models/player/male_portal_player.mdl"
 };
 
