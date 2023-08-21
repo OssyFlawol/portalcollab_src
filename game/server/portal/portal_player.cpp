@@ -213,8 +213,38 @@ END_DATADESC()
 
 ConVar sv_regeneration_wait_time ("sv_regeneration_wait_time", "1.0", FCVAR_REPLICATED );
 
-const char *g_pszChellModel = "models/player/chell.mdl";
-const char *g_pszPlayerModel = g_pszChellModel;
+enum
+{
+	MODEL_CHELL,
+	MODEL_MEL,
+	MODEL_MALE_PORTAL_PLAYER
+};
+
+const char *g_ppszPortalMPModels[] =
+{
+	"models/player/Chell.mdl",
+	"models/player/Mel.mdl",
+	"models/player/male_portal_player.mdl",
+	"models/player/retail_quinton.mdl",			//not implemented yet
+	"models/player/subject/male_01.mdl",
+	"models/player/subject/male_02.mdl",
+	"models/player/subject/male_03.mdl",
+	"models/player/subject/male_04.mdl",
+	"models/player/subject/male_05.mdl",
+	"models/player/subject/male_06.mdl",
+	"models/player/subject/male_07.mdl",
+	"models/player/subject/male_08.mdl",
+	"models/player/subject/male_09.mdl",
+	"models/player/subject/female_01.mdl",
+	"models/player/subject/female_02.mdl",
+	"models/player/subject/female_03.mdl",
+	"models/player/subject/female_04.mdl",
+	"models/player/subject/female_06.mdl",
+	"models/player/subject/female_07.mdl",
+	"models/player/subject/male_trav.mdl",		//not implemented yet
+	"models/player/subject/male_warren.mdl",	//not implemented yet
+	"models/player/subject/male_kel.mdl"		//not implemented yet
+};
 
 
 #define MAX_COMBINE_MODELS 4
@@ -290,6 +320,13 @@ void CPortal_Player::UpdateOnRemove( void )
 void CPortal_Player::Precache( void )
 {
 	BaseClass::Precache();
+	
+	//Precache Citizen models
+	int nHeads = ARRAYSIZE(g_ppszPortalMPModels);
+	int i;
+
+	for (i = 0; i < nHeads; ++i)
+		PrecacheModel(g_ppszPortalMPModels[i]);
 
 	PrecacheScriptSound( "PortalPlayer.EnterPortal" );
 	PrecacheScriptSound( "PortalPlayer.ExitPortal" );
@@ -298,10 +335,6 @@ void CPortal_Player::Precache( void )
 	PrecacheScriptSound( "PortalPlayer.FallRecover" );
 
 	PrecacheModel ( "sprites/glow01.vmt" );
-
-	//Precache Citizen models
-	PrecacheModel( g_pszPlayerModel );
-	PrecacheModel( g_pszChellModel );
 
 	PrecacheScriptSound("PortalPlayer.BonkYelp");
 	PrecacheScriptSound("PortalPlayer.PainYelp");
@@ -474,14 +507,15 @@ void CPortal_Player::OnRestore( void )
 
 bool CPortal_Player::ValidatePlayerModel( const char *pModel )
 {
-	if ( !Q_stricmp( g_pszPlayerModel, pModel ) )
-	{
-		return true;
-	}
+	int iModels = ARRAYSIZE(g_ppszPortalMPModels);
+	int i;
 
-	if ( !Q_stricmp( g_pszChellModel, pModel ) )
+	for (i = 0; i < iModels; ++i)
 	{
-		return true;
+		if (!Q_stricmp(g_ppszPortalMPModels[i], pModel))
+		{
+			return true;
+		}
 	}
 
 	return false;
@@ -489,41 +523,65 @@ bool CPortal_Player::ValidatePlayerModel( const char *pModel )
 
 void CPortal_Player::SetPlayerModel( void )
 {
-	const char *szModelName = NULL;
-	const char *pszCurrentModelName = modelinfo->GetModelName( GetModel());
+	const char* szModelName = NULL;
+	const char *pszCurrentModelName = modelinfo->GetModelName(GetModel());
 
-	szModelName = engine->GetClientConVarValue( engine->IndexOfEdict( edict() ), "cl_playermodel" );
-
-	if ( ValidatePlayerModel( szModelName ) == false )
+	szModelName = engine->GetClientConVarValue(engine->IndexOfEdict(edict()), "cl_playermodel");
+		
+	if (ValidatePlayerModel(szModelName) == false)
 	{
 		char szReturnString[512];
-
+		
 		if ( ValidatePlayerModel( pszCurrentModelName ) == false )
 		{
-			pszCurrentModelName = g_pszPlayerModel;
+			pszCurrentModelName = "models/player/chell.mdl";
 		}
 
-		Q_snprintf( szReturnString, sizeof (szReturnString ), "cl_playermodel %s\n", pszCurrentModelName );
-		engine->ClientCommand ( edict(), szReturnString );
+		Q_snprintf(szReturnString, sizeof(szReturnString), "cl_playermodel %s\n", pszCurrentModelName);
+		engine->ClientCommand(edict(), szReturnString);
 
 		szModelName = pszCurrentModelName;
 	}
 
-	int modelIndex = modelinfo->GetModelIndex( szModelName );
+	int modelIndex = modelinfo->GetModelIndex(szModelName);
 
-	if ( modelIndex == -1 )
+	if (modelIndex == -1)
 	{
-		szModelName = g_pszPlayerModel;
+		szModelName = "models/player/chell.mdl";
 
 		char szReturnString[512];
 
-		Q_snprintf( szReturnString, sizeof (szReturnString ), "cl_playermodel %s\n", szModelName );
-		engine->ClientCommand ( edict(), szReturnString );
+		Q_snprintf(szReturnString, sizeof(szReturnString), "cl_playermodel %s\n", szModelName);
+		engine->ClientCommand(edict(), szReturnString);
 	}
+		
+	if (m_PlayerAnimState)
+		m_PlayerAnimState->Release();
 
-	SetModel( szModelName );
-	m_iPlayerSoundType = (int)PLAYER_SOUNDS_CITIZEN;
+	SetModel(szModelName);
+	ResetAnimation();
+	m_PlayerAnimState = CreatePortalPlayerAnimState(this);
+	ResetAnimation();
+	
+	UpdateExpression();
 }
+
+void CPortal_Player::ResetAnimation(void)
+{
+	if ( IsAlive() )
+	{
+		SetSequence ( -1 );
+		SetActivity( ACT_INVALID );
+
+		if (!GetAbsVelocity().x && !GetAbsVelocity().y)
+			SetAnimation( PLAYER_IDLE );
+		else if ((GetAbsVelocity().x || GetAbsVelocity().y) && ( GetFlags() & FL_ONGROUND ))
+			SetAnimation( PLAYER_WALK );
+		else if (GetWaterLevel() > 1)
+			SetAnimation( PLAYER_WALK );
+	}
+}
+
 
 
 bool CPortal_Player::Weapon_Switch( CBaseCombatWeapon *pWeapon, int viewmodelindex )

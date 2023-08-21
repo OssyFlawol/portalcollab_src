@@ -31,8 +31,10 @@ public:
 
 					CBasePanel( vgui::Panel *pParent, const char *panelName );
 					CBasePanel( vgui::Panel *pParent, const char *panelName, int x, int y, int w, int h );
+// This is conflicting with CBasePanel in BasePanel_Simplified, which is weird because it didn't do that in the portalcoop mod - Wonderland_War
+#if 1
 	virtual			~CBasePanel( void );
-
+#endif
 	// should this panel be drawn this frame?
 	virtual bool	ShouldDraw( void ) { return true;}
 

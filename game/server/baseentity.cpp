@@ -6334,7 +6334,12 @@ void CC_Ent_FireTarget( const CCommand& args )
 }
 static ConCommand firetarget("firetarget", CC_Ent_FireTarget, 0, FCVAR_CHEAT);
 
+<<<<<<< HEAD
 #ifndef MAPBASE
+=======
+// This should be defined in utlstring.h - Wonderland_War
+#if 0
+>>>>>>> main
 static bool UtlStringLessFunc( const CUtlString &lhs, const CUtlString &rhs )
 {
 	return Q_stricmp( lhs.String(), rhs.String() ) < 0;
