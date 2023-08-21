@@ -113,7 +113,7 @@ $Project "Client (Portal Collab)"
 
 		$Folder	"Portal"
 		{
-			$File	"$SRCDIR\game\shared\portal\achievements_portal.cpp"
+			//$File	"$SRCDIR\game\shared\portal\achievements_portal.cpp"
 			$File	"portal\c_env_lightraill_endpoint.cpp"
 			$File	"portal\c_env_portal_path_track.cpp"
 			$File	"portal\c_func_liquidportal.cpp"

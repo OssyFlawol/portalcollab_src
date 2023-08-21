@@ -20,6 +20,8 @@
 #include "KeyValues.h"
 #include "time.h"
 
+#include "icommandline.h"
+
 #ifdef USES_ECON_ITEMS
 	#include "econ_item_constants.h"
 	#include "econ_holidays.h"
@@ -1288,4 +1290,23 @@ const char* UTIL_GetActiveHolidayString()
 #else
 	return NULL;
 #endif
+}
+
+
+const char *COM_GetModDirectory()
+{
+	static char modDir[MAX_PATH];
+	if ( Q_strlen( modDir ) == 0 )
+	{
+		const char *gamedir = CommandLine()->ParmValue("-game", CommandLine()->ParmValue( "-defaultgamedir", "hl2" ) );
+		Q_strncpy( modDir, gamedir, sizeof(modDir) );
+		if ( strchr( modDir, '/' ) || strchr( modDir, '\\' ) )
+		{
+			Q_StripLastDir( modDir, sizeof(modDir) );
+			int dirlen = Q_strlen( modDir );
+			Q_strncpy( modDir, gamedir + dirlen, sizeof(modDir) - dirlen );
+		}
+	}
+
+	return modDir;
 }

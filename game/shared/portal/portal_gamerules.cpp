@@ -25,8 +25,8 @@
 	#include "props.h"		// For props flags used in making the portal weight box
 	#include "datacache/imdlcache.h"	// For precaching box model
 
-	#include "achievementmgr.h"
-	extern CAchievementMgr g_AchievementMgrPortal;
+	//#include "achievementmgr.h"
+	//extern CAchievementMgr g_AchievementMgrPortal;
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -1199,9 +1199,9 @@ bool CPortalGameRules::ShouldBurningPropsEmitLight()
 //---------------------------------------------------------
 bool CPortalGameRules::ShouldRemoveRadio( void )
 {
-	IAchievement *pHeartbreaker = g_AchievementMgrPortal.GetAchievementByName( "PORTAL_BEAT_GAME" );
-	if ( pHeartbreaker && pHeartbreaker->IsAchieved() )
-		return true;
+	//IAchievement *pHeartbreaker = g_AchievementMgrPortal.GetAchievementByName( "PORTAL_BEAT_GAME" );
+	//if ( pHeartbreaker && pHeartbreaker->IsAchieved() )
+	//	return true;
 
 	return false;
 }
