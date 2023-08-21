@@ -1160,6 +1160,14 @@ bool CPortalGameRules::ShouldUseRobustRadiusDamage(CBaseEntity *pEntity)
 	return true;
 }
 
+//=========================================================
+//=========================================================
+bool CPortalGameRules::IsMultiplayer(void)
+{
+	return (gpGlobals->maxClients > 1);
+}
+
+
 void CPortalGameRules::ClientSettingsChanged(CBasePlayer *pPlayer)
 {
 #ifndef CLIENT_DLL

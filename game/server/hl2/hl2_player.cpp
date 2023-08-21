@@ -1590,6 +1590,12 @@ void CHL2_Player::StartAutoSprint()
 	}
 }
 
+bool CHL2_Player::GetSprintDevice(void)
+{
+	m_bHasSprintDevice = SuitPower_AddDevice(SuitDeviceSprint);
+	return m_bHasSprintDevice;
+}
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CHL2_Player::StartSprinting( void )
@@ -1608,8 +1614,8 @@ void CHL2_Player::StartSprinting( void )
 		}
 		return;
 	}
-
-	if( !SuitPower_AddDevice( SuitDeviceSprint ) )
+	
+	if (!GetSprintDevice())
 		return;
 
 	CPASAttenuationFilter filter( this );

@@ -167,6 +167,8 @@ SendPropEHandle( SENDINFO( m_pHeldObjectPortal ) ),
 SendPropBool( SENDINFO( m_bPitchReorientation ) ),
 SendPropEHandle( SENDINFO( m_hPortalEnvironment ) ),
 SendPropEHandle( SENDINFO( m_hSurroundingLiquidPortal ) ),
+SendPropBool(SENDINFO(m_bHasSprintDevice)),
+SendPropBool(SENDINFO(m_bSprintEnabled)),
 SendPropBool( SENDINFO( m_bSuppressingCrosshair ) ),
 SendPropExclude( "DT_BaseAnimating", "m_flPoseParameter" ),
 
@@ -217,7 +219,26 @@ enum
 {
 	MODEL_CHELL,
 	MODEL_MEL,
-	MODEL_MALE_PORTAL_PLAYER
+	MODEL_MALE_PORTAL_PLAYER,
+	MODEL_RETAIL_QUINTON,
+	MODEL_MALE_01,
+	MODEL_MALE_02,
+	MODEL_MALE_03,
+	MODEL_MALE_04,
+	MODEL_MALE_05,
+	MODEL_MALE_06,
+	MODEL_MALE_07,
+	MODEL_MALE_08,
+	MODEL_MALE_09,
+	MODEL_FEMALE_01,
+	MODEL_FEMALE_02,
+	MODEL_FEMALE_03,
+	MODEL_FEMALE_04,
+	MODEL_FEMALE_05,
+	MODEL_FEMALE_06,
+	MODEL_MALE_TRAV,
+	MODEL_MALE_WARREN,
+	MODEL_MALE_KEL,
 };
 
 const char *g_ppszPortalMPModels[] =
@@ -225,7 +246,7 @@ const char *g_ppszPortalMPModels[] =
 	"models/player/Chell.mdl",
 	"models/player/Mel.mdl",
 	"models/player/male_portal_player.mdl",
-	"models/player/retail_quinton.mdl",			//not implemented yet
+	"models/player/retail_quinton.mdl",
 	"models/player/subject/male_01.mdl",
 	"models/player/subject/male_02.mdl",
 	"models/player/subject/male_03.mdl",
@@ -591,35 +612,123 @@ bool CPortal_Player::Weapon_Switch( CBaseCombatWeapon *pWeapon, int viewmodelind
 	return bRet;
 }
 
+int CPortal_Player::GetPlayerConcept( void )
+{
+	string_t iszPlayerModel = GetModelName();
+	
+	if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_CHELL])) // Chell
+		return CONCEPT_CHELL_IDLE;
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_MEL])) // Mel
+	{
+		if ( GlobalEntity_GetState("pcoop_escape_expressions") == GLOBAL_ON )
+		{
+			return CONCEPT_MEL_ESCAPE_IDLE; // We don't want Mel smiling when she's entering a fire pit or escaping
+		}
+		else
+		{
+			return CONCEPT_MEL_IDLE;
+		}
+	}
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_MALE_PORTAL_PLAYER])) // male_portal_player
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+	// For now, let's use the male_portal_player concepts for all citizen models
+	// DONT REMOVE THESE AND MAKE THE DEFAULT RETURN VALUE "CONCEPT_MALE_PORTAL_PLAYER_IDLE"
+	// BECAUSE WE MAY EVENTUALLY WANT NEW EXPRESSIONS FOR SOME OF THESE
+	
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_RETAIL_QUINTON])) // retail_quinton
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_MALE_01])) // male_01
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_MALE_02])) // male_02
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_MALE_03])) // male_03
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_MALE_04])) // male_04
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_MALE_05])) // male_05
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_MALE_06])) // male_06
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_MALE_07])) // male_07
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_MALE_08])) // male_08
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_MALE_09])) // male_09
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_FEMALE_01])) // female_01
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_FEMALE_02])) // female_02
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_FEMALE_03])) // female_03
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_FEMALE_04])) // female_04
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_FEMALE_05])) // female_05
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_FEMALE_06])) // female_06
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_MALE_TRAV])) // male_trav
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_MALE_WARREN])) // male_warren
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+	else if (!strcmp(iszPlayerModel.ToCStr(), g_ppszPortalMPModels[MODEL_MALE_KEL])) // male_kel
+		return CONCEPT_MALE_PORTAL_PLAYER_IDLE;
+
+
+	return CONCEPT_CHELL_IDLE;
+
+}
+// The new mapbase response system here seems to make "result" return as NULL, that's bad because we can't have expressions - Wonderland_War
+#undef NEW_RESPONSE_SYSTEM
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
 void CPortal_Player::UpdateExpression( void )
 {
 	if ( !m_pExpresser )
-		return;
-
-	int iConcept = CONCEPT_CHELL_IDLE;
-	if ( GetHealth() <= 0 )
 	{
-		iConcept = CONCEPT_CHELL_DEAD;
+		return;
+	}
+	int iConcept = GetPlayerConcept();
+	if ( IsDead() )
+	{
+		iConcept = CONCEPT_PLAYER_DEAD;
 	}
 
 	GetExpresser()->SetOuter( this );
 
 	ClearExpression();
-	
+
+
 #ifdef NEW_RESPONSE_SYSTEM
 	AI_Response result;
-	CAI_Concept concept(g_pszChellConcepts[iConcept]);
+	CAI_Concept concept(g_pszPortalPlayerConcepts[iConcept]);
 	AI_Response response;
 	concept.SetSpeaker(this);
 	SpeakFindResponse(result, concept);
-#else
-	AI_Response* result = SpeakFindResponse(g_pszChellConcepts[iConcept]);
-#endif
+	
 	if ( &result != NULL )
 	{
+		Warning("Couldn't find result\n");
 		m_flExpressionLoopTime = gpGlobals->curtime + RandomFloat(30,40);
 		return;
 	}
@@ -627,6 +736,20 @@ void CPortal_Player::UpdateExpression( void )
 	char szScene[MAX_PATH];
 	result.GetResponse(szScene, sizeof(szScene));
 
+#else
+	
+	AI_Response response;
+	bool result = SpeakFindResponse( response, g_pszPortalPlayerConcepts[iConcept] );
+	if ( !result )
+	{
+		m_flExpressionLoopTime = gpGlobals->curtime + RandomFloat(30,40);
+		return;
+	}
+
+	char const *szScene = response.GetResponsePtr();
+
+#endif
+	
 	// Ignore updates that choose the same scene
 	if ( m_iszExpressionScene != NULL_STRING && stricmp( STRING(m_iszExpressionScene), szScene ) == 0 )
 		return;

@@ -63,6 +63,9 @@ public:
 	virtual void PostThink( void );
 	virtual void PreThink( void );
 	virtual void PlayerDeathThink( void );
+	
+	CNetworkVar (bool, m_bHasSprintDevice);
+	CNetworkVar (bool, m_bSprintEnabled);
 
 	void UpdatePortalPlaneSounds( void );
 	void UpdateWooshSounds( void );
@@ -128,6 +131,7 @@ public:
 
 	void SetPlayerModel( void );
 	
+	int	GetPlayerConcept( void );
 	void UpdateExpression ( void );
 	void ClearExpression ( void );
 	

@@ -59,6 +59,8 @@ public:
 #ifdef CLIENT_DLL
 	virtual bool IsBonusChallengeTimeBased( void );
 #endif
+	
+	virtual bool IsMultiplayer( void );
 
 private:
 	// Rules change for the mega physgun

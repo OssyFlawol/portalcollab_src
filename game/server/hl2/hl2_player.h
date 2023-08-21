@@ -217,6 +217,7 @@ public:
 	void UpdateLocatorPosition( const Vector &vecPosition );
 
 	// Sprint Device
+	bool GetSprintDevice(void);
 	void StartAutoSprint( void );
 	void StartSprinting( void );
 	void StopSprinting( void );
@@ -224,6 +225,8 @@ public:
 	bool IsSprinting( void ) { return m_fIsSprinting; }
 	bool CanSprint( void );
 	void EnableSprint( bool bEnable);
+	
+	bool m_bHasSprintDevice;
 
 	bool CanZoom( CBaseEntity *pRequester );
 	void ToggleZoom(void);

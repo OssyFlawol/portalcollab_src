@@ -154,6 +154,7 @@ void GameStartFrame( void )
 //=========================================================
 void InstallGameRules()
 {
+#if 0
 	if ( !gpGlobals->deathmatch )
 	{
 		CreateGameRulesObject( "CPortalGameRules" );
@@ -172,5 +173,8 @@ void InstallGameRules()
 			CreateGameRulesObject( "CMultiplayRules" );
 		}
 	}
+#endif
+
+	CreateGameRulesObject("CPortalGameRules");
 }
 

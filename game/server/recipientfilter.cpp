@@ -233,46 +233,19 @@ void CRecipientFilter::RemovePlayersFromBitMask( CBitVec< ABSOLUTE_PLAYER_LIMIT 
 
 void CRecipientFilter::AddRecipientsByPVS( const Vector& origin )
 {
-	if ( gpGlobals->maxClients == 1 )
-	{
-		AddAllPlayers();
-	}
-	else
-	{
-		CBitVec< ABSOLUTE_PLAYER_LIMIT > playerbits;
-		engine->Message_DetermineMulticastRecipients( false, origin, playerbits );
-		AddPlayersFromBitMask( playerbits );
-	}
+	AddAllPlayers();
 }
 
 void CRecipientFilter::RemoveRecipientsByPVS( const Vector& origin )
 {
-	if ( gpGlobals->maxClients == 1 )
-	{
-		m_Recipients.RemoveAll();
-	}
-	else
-	{
-		CBitVec< ABSOLUTE_PLAYER_LIMIT > playerbits;
-		engine->Message_DetermineMulticastRecipients( false, origin, playerbits );
-		RemovePlayersFromBitMask( playerbits );
-	}
+	m_Recipients.RemoveAll();
 }
 
 
 
 void CRecipientFilter::AddRecipientsByPAS( const Vector& origin )
 {
-	if ( gpGlobals->maxClients == 1 )
-	{
-		AddAllPlayers();
-	}
-	else
-	{
-		CBitVec< ABSOLUTE_PLAYER_LIMIT > playerbits;
-		engine->Message_DetermineMulticastRecipients( true, origin, playerbits );
-		AddPlayersFromBitMask( playerbits );
-	}
+	AddAllPlayers();
 }
 
 bool CRecipientFilter::IsInitMessage( void ) const

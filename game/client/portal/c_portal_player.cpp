@@ -283,6 +283,8 @@ RecvPropBool( RECVINFO( m_bPitchReorientation ) ),
 RecvPropEHandle( RECVINFO( m_hPortalEnvironment ) ),
 RecvPropEHandle( RECVINFO( m_hSurroundingLiquidPortal ) ),
 RecvPropBool( RECVINFO( m_bSuppressingCrosshair ) ),
+RecvPropBool( RECVINFO( m_bHasSprintDevice ) ),
+RecvPropBool( RECVINFO( m_bSprintEnabled ) ),
 END_RECV_TABLE()
 
 
@@ -1210,6 +1212,11 @@ Vector C_Portal_Player::GetAutoaimVector( float flDelta )
 //-----------------------------------------------------------------------------
 bool C_Portal_Player::CanSprint( void )
 {
+	if (!m_bHasSprintDevice || !m_bSprintEnabled)
+	{
+		return false;
+	}
+
 	return ( (!m_Local.m_bDucked && !m_Local.m_bDucking) && (GetWaterLevel() != 3) );
 }
 

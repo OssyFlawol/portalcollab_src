@@ -23,11 +23,16 @@ enum
 
 enum 
 {
+	CONCEPT_PLAYER_DEAD,
 	CONCEPT_CHELL_IDLE,
-	CONCEPT_CHELL_DEAD,
+	CONCEPT_MEL_IDLE,
+	CONCEPT_MALE_PORTAL_PLAYER_IDLE,
+	//Escape Idles
+	CONCEPT_MEL_ESCAPE_IDLE,
 };
 
-extern const char *g_pszChellConcepts[];
+
+extern const char *g_pszPortalPlayerConcepts[];
 int GetChellConceptIndexFromString( const char *pszConcept );
 
 #if defined( CLIENT_DLL )

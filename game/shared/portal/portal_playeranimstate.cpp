@@ -232,7 +232,7 @@ bool CPortalPlayerAnimState::HandleMoving( Activity &idealActivity )
 //-----------------------------------------------------------------------------
 bool CPortalPlayerAnimState::HandleDucking( Activity &idealActivity )
 {
-	if ( GetBasePlayer()->m_Local.m_bDucking || GetBasePlayer()->m_Local.m_bDucked )
+	if ( GetBasePlayer()->m_Local.m_bDucking || GetBasePlayer()->m_Local.m_bDucked || GetBasePlayer()->GetFlags() & FL_DUCKING )
 	{
 		if ( GetOuterXYSpeed() < MOVING_MINIMUM_SPEED )
 		{
@@ -268,7 +268,8 @@ bool CPortalPlayerAnimState::HandleJumping( Activity &idealActivity )
 		else
 		{
 			// In an air walk.
-			idealActivity = ACT_MP_AIRWALK;
+			//idealActivity = ACT_MP_AIRWALK;
+			idealActivity = ACT_MP_JUMP_START; // Air walk doesn't have an anim, just use jump instead
 			m_bInAirWalk = true;
 		}
 	}

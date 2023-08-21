@@ -5098,7 +5098,7 @@ CBaseEntity *CBasePlayer::EntSelectSpawnPoint()
 		if ( pSpot )
 		{
 			CBaseEntity *ent = NULL;
-			for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 128 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
+			for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin() + Vector(0,0,32), 32 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
 			{
 				// if ent is a client, kill em (unless they are ourselves)
 				if ( ent->IsPlayer() && !(ent->edict() == player) )
