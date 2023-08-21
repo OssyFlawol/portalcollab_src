@@ -5872,10 +5872,12 @@ void ConsoleFireTargets( CBasePlayer *pPlayer, const char *name)
 }
 
 #ifdef MAPBASE
+#if 0
 inline bool UtlStringLessFunc( const CUtlString &lhs, const CUtlString &rhs )
 {
 	return Q_stricmp( lhs.String(), rhs.String() ) < 0;
 }
+#endif
 
 //------------------------------------------------------------------------------
 // Purpose : More concommands needed access to entities, so this has been moved to its own function.
