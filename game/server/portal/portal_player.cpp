@@ -609,15 +609,23 @@ void CPortal_Player::UpdateExpression( void )
 
 	ClearExpression();
 	
-	AI_Response *result = SpeakFindResponse(g_pszChellConcepts[iConcept]);
-	if ( !result )
+#ifdef NEW_RESPONSE_SYSTEM
+	AI_Response result;
+	CAI_Concept concept(g_pszChellConcepts[iConcept]);
+	AI_Response response;
+	concept.SetSpeaker(this);
+	SpeakFindResponse(result, concept);
+#else
+	AI_Response* result = SpeakFindResponse(g_pszChellConcepts[iConcept]);
+#endif
+	if ( &result != NULL )
 	{
 		m_flExpressionLoopTime = gpGlobals->curtime + RandomFloat(30,40);
 		return;
 	}
 
 	char szScene[MAX_PATH];
-	result->GetResponse(szScene, sizeof(szScene));
+	result.GetResponse(szScene, sizeof(szScene));
 
 	// Ignore updates that choose the same scene
 	if ( m_iszExpressionScene != NULL_STRING && stricmp( STRING(m_iszExpressionScene), szScene ) == 0 )

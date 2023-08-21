@@ -18,6 +18,9 @@ $include "$SRCDIR\vpc_scripts\protobuf_builder.vpc"
 $Include "$SRCDIR\vpc_scripts\source_replay.vpc"	[$TF]
 $Include "$SRCDIR\game\protobuf_include.vpc"
 
+// Mapbase stuff
+$Include "$SRCDIR\game\client\client_mapbase.vpc"	 [$MAPBASE]
+
 $Configuration	"Debug"
 {
 	$General
@@ -271,14 +274,14 @@ $Project
 		$File	"hud_weapon.cpp"
 		$File	"train.cpp"
 		$File	"$SRCDIR\game\shared\weapon_parse_default.cpp"
-		$File	"$SRCDIR\game\shared\achievement_saverestore.cpp"
-		$File	"$SRCDIR\game\shared\achievement_saverestore.h"
-		$File	"$SRCDIR\game\shared\achievementmgr.cpp"
-		$File	"$SRCDIR\game\shared\achievementmgr.h"
-		$File   "$SRCDIR\game\shared\achievements_and_stats_interface.h"
-		$File	"$SRCDIR\game\shared\achievements_hlx.cpp"
-		$File	"achievement_notification_panel.cpp"
-		$File	"achievement_notification_panel.h"
+		//$File	"$SRCDIR\game\shared\achievement_saverestore.cpp"
+		//$File	"$SRCDIR\game\shared\achievement_saverestore.h"
+		//$File	"$SRCDIR\game\shared\achievementmgr.cpp"
+		//$File	"$SRCDIR\game\shared\achievementmgr.h"
+		//$File   "$SRCDIR\game\shared\achievements_and_stats_interface.h"
+		//$File	"$SRCDIR\game\shared\achievements_hlx.cpp"
+		//$File	"achievement_notification_panel.cpp"
+		//$File	"achievement_notification_panel.h"
 		$File	"$SRCDIR\game\shared\activitylist.cpp"
 		$File	"alphamaterialproxy.cpp"
 		$File	"$SRCDIR\game\shared\ammodef.cpp"
@@ -288,8 +291,8 @@ $Project
 		$File	"AnimateSpecificTextureProxy.cpp"
 		$File	"$SRCDIR\game\shared\animation.cpp"
 		$File	"$SRCDIR\game\shared\base_playeranimstate.cpp"
-		$File	"$SRCDIR\game\shared\baseachievement.cpp"
-		$File	"$SRCDIR\game\shared\baseachievement.h"
+		//$File	"$SRCDIR\game\shared\baseachievement.cpp"
+		//$File	"$SRCDIR\game\shared\baseachievement.h"
 		$File	"baseanimatedtextureproxy.cpp"
 		$File	"baseclientrendertargets.cpp"
 		$File	"$SRCDIR\game\shared\basecombatcharacter_shared.cpp"
@@ -582,6 +585,11 @@ $Project
 		$File	"viewrender.cpp"
 		$File	"$SRCDIR\game\shared\voice_banmgr.cpp"
 		$File	"$SRCDIR\game\shared\voice_status.cpp"
+		$File	"vscript_client.cpp"
+		$File	"vscript_client.h"
+		$File	"vscript_client.nut"
+		$File	"$SRCDIR\game\shared\vscript_shared.cpp"
+		$File	"$SRCDIR\game\shared\vscript_shared.h"
 		$File	"warp_overlay.cpp"
 		$File	"WaterLODMaterialProxy.cpp"
 		$File	"$SRCDIR\game\shared\weapon_parse.cpp"
@@ -620,7 +628,6 @@ $Project
 				"$SRCDIR\public\dt_utlvector_recv.cpp"				\
 				"$SRCDIR\public\filesystem_helpers.cpp"				\
 				"$SRCDIR\public\interpolatortypes.cpp"				\
-				"$SRCDIR\game\shared\interval.cpp"					\
 				"$SRCDIR\common\language.cpp"						\
 				"$SRCDIR\public\networkvar.cpp"						\
 				"$SRCDIR\common\randoverride.cpp"					\
@@ -1028,7 +1035,7 @@ $Project
 		$File	"$SRCDIR\public\gametrace.h"
 		$File	"$SRCDIR\public\globalvars_base.h"
 		$File	"$SRCDIR\public\vgui_controls\HTML.h"
-		$File	"$SRCDIR\public\iachievementmgr.h"
+		//$File	"$SRCDIR\public\iachievementmgr.h"
 		$File	"$SRCDIR\public\appframework\IAppSystem.h"
 		$File	"$SRCDIR\public\icliententity.h"
 		$File	"$SRCDIR\public\icliententitylist.h"
@@ -1191,6 +1198,7 @@ $Project
 		$File	"$SRCDIR\public\vgui_controls\WizardSubPanel.h"
 		$File	"$SRCDIR\public\worldsize.h"
 		$File	"$SRCDIR\public\zip_uncompressed.h"
+		$File	"$SRCDIR\public\tier1\interval.h"
 		//Haptics
 		$File   "$SRCDIR\public\haptics\ihaptics.h"	[$WIN32]
 		$File   "$SRCDIR\public\haptics\haptic_utils.h"	[$WIN32]
@@ -1247,7 +1255,6 @@ $Project
 		$File	"$SRCDIR\game\shared\igamesystem.h"
 		$File	"$SRCDIR\game\shared\imovehelper.h"
 		$File	"$SRCDIR\game\shared\in_buttons.h"
-		$File	"$SRCDIR\game\shared\interval.h"
 		$File	"$SRCDIR\game\shared\iplayeranimstate.h"
 		$File	"$SRCDIR\game\shared\ipredictionsystem.h"
 		$File	"$SRCDIR\game\shared\itempents.h"
@@ -1347,6 +1354,9 @@ $Project
 		$ImpLib		steam_api
 		$Lib libpng [!$VS2015&&!$DEDICATED]
 		$Lib $LIBCOMMON/libpng [$VS2015&&!$DEDICATED]
+		
+		// Discord integration
+		$Lib	"$LIBPUBLIC\discord-rpc" [$MAPBASE_RPC&&!$LINUXALL]
 		
 		$Lib $LIBCOMMON/libcrypto [$POSIX]
 

@@ -29,6 +29,7 @@ $Project "game_shader_dx9"
 {
 	"materialsystem\stdshaders\game_shader_dx9_hl2.vpc" [$HL2]
 	"materialsystem\stdshaders\game_shader_dx9_episodic.vpc"  [$EPISODIC]
+	"materialsystem\stdshaders\game_shader_dx9_portalcollab.vpc"  [$PORTALCOLLAB]
 }
 
 $Project "glview"
@@ -46,6 +47,11 @@ $Project "server"
 	"game\server\server_hl2.vpc"		[($WIN32||$X360||$POSIX) && $HL2]
 	"game\server\server_episodic.vpc"	[($WIN32||$X360||$POSIX) && $EPISODIC]
 	"game\server\server_portalcollab.vpc"	[($WIN32||$X360||$POSIX) && $PORTALCOLLAB]
+}
+
+$Project "responserules"
+{
+	"responserules\runtime\response_rules.vpc" [($WINDOWS||$X360||$POSIX) && $NEW_RESPONSE_SYSTEM]
 }
 
 $Project "mathlib"
@@ -111,6 +117,11 @@ $Project "vrad_dll"
 $Project "vrad_launcher"
 {
 	"utils\vrad_launcher\vrad_launcher.vpc" [$WIN32]
+}
+
+$Project "vscript"
+{
+	"vscript\vscript.vpc"
 }
 
 $Project "vtf2tga"
