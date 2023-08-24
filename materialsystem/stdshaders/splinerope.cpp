@@ -12,9 +12,15 @@
 
 static ConVar rope_min_pixel_diameter( "rope_min_pixel_diameter", "2.0", FCVAR_CHEAT );
 
-DEFINE_FALLBACK_SHADER( SDK_Cable, SDK_Cable_DX9 )
+#if SHADER_OVERRIDE
+DEFINE_FALLBACK_SHADER(SDK_Cable, Cable)
 
-BEGIN_VS_SHADER( SDK_Cable_DX9, "Help for SplineRope" )
+BEGIN_VS_SHADER( Cable, "Help for SplineRope" )
+#else
+DEFINE_FALLBACK_SHADER(SDK_Cable, SDK_Cable_DX9)
+
+BEGIN_VS_SHADER(SDK_Cable_DX9, "Help for SplineRope")
+#endif
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM( SHADERSRGBREAD360, SHADER_PARAM_TYPE_BOOL, "0", "Simulate srgb read in shader code")
 		SHADER_PARAM( SHADOWDEPTH, SHADER_PARAM_TYPE_INTEGER, "0", "writing to a shadow depth buffer" )

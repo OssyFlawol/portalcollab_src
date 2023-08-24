@@ -1,0 +1,48 @@
+//-----------------------------------------------------------------------------
+//	mod_shader_dx9.vpc
+//
+//	Project Script for mods to use an an example of how to override shaders
+//-----------------------------------------------------------------------------
+
+$Macro SRCDIR		"..\.."
+$Macro GAMENAME "portalcollab"
+$Macro OUTBINNAME	"mod_shader_dx9"
+$Include "$SRCDIR\materialsystem\stdshaders\game_shader_dx9_base.vpc"
+
+$Configuration	"Debug"
+{
+	$General
+	{
+		$OutputDirectory		"Debug_mod_dx9_$GAMENAME"			[$WIN32]
+		$IntermediateDirectory	"Debug_mod_dx9_$GAMENAME"			[$WIN32]
+	}
+}
+
+$Configuration	"Release"
+{
+	$General
+	{
+		$OutputDirectory		"Release_mod_dx9_$GAMENAME"		[$WIN32]
+		$IntermediateDirectory	"Release_mod_dx9_$GAMENAME"		[$WIN32]
+	}
+}
+
+// Common Configuration
+$Configuration
+{
+	$Compiler
+	{
+		$PreprocessorDefinitions		"$BASE;SHADER_OVERRIDE"
+	}
+}
+
+$Project "Shaders w/ Override (Portal Collab)"
+{
+	$Folder	"Remove me when VAC2 is out" [$WIN32]
+	{
+		$File	"$SRCDIR\tier1\checksum_crc.cpp"
+		$File	"$SRCDIR\tier1\checksum_md5.cpp"
+		$File	"..\shader_dll_verify.cpp"
+		$File	"..\shader_dll_verify.h"
+	}
+}

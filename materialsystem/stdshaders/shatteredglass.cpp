@@ -15,9 +15,15 @@
 // NOTE: This has to be the last file included!
 #include "tier0/memdbgon.h"
 
-
-BEGIN_VS_SHADER( SDK_ShatteredGlass,
+#if SHADER_OVERRIDE
+DEFINE_FALLBACK_SHADER(SDK_ShatteredGlass, ShatteredGlass)
+BEGIN_VS_SHADER( ShatteredGlass,
 			  "Help for SDK_ShatteredGlass" )
+#else
+
+BEGIN_VS_SHADER(SDK_ShatteredGlass,
+	"Help for SDK_ShatteredGlass")
+#endif
 
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM_OVERRIDE( BASETEXTURE, SHADER_PARAM_TYPE_TEXTURE, "Glass/glasswindowbreak070b", "unused", SHADER_PARAM_NOT_EDITABLE )

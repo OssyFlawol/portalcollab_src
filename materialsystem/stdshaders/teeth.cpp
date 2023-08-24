@@ -29,10 +29,18 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-DEFINE_FALLBACK_SHADER( SDK_Teeth, SDK_Teeth_DX9 )
-
 extern ConVar r_flashlight_version2;
-BEGIN_VS_SHADER( SDK_Teeth_DX9, "Help for SDK_Teeth_DX9" )
+
+#if SHADER_OVERRIDE
+DEFINE_FALLBACK_SHADER( SDK_Teeth, Teeth_DX9 )
+DEFINE_FALLBACK_SHADER( Teeth, Teeth_DX9 )
+
+BEGIN_VS_SHADER( Teeth_DX9, "Help for SDK_Teeth_DX9" )
+#else
+DEFINE_FALLBACK_SHADER(SDK_Teeth, SDK_Teeth_DX9)
+
+BEGIN_VS_SHADER(SDK_Teeth_DX9, "Help for SDK_Teeth_DX9")
+#endif
 
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM( ILLUMFACTOR, SHADER_PARAM_TYPE_FLOAT, "1", "Amount to darken or brighten the teeth" )

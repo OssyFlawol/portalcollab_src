@@ -16,10 +16,18 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-DEFINE_FALLBACK_SHADER( sdk_windowimposter, sdk_windowimposter_DX90 )
+#if SHADER_OVERRIDE
+DEFINE_FALLBACK_SHADER( sdk_windowimposter, windowimposter_DX90 )
+DEFINE_FALLBACK_SHADER( windowimposter, windowimposter_DX90 )
 
-BEGIN_VS_SHADER( sdk_windowimposter_DX90,
+BEGIN_VS_SHADER( windowimposter_DX90,
 			  "Help for WindowImposter_DX90" )
+#else
+DEFINE_FALLBACK_SHADER(sdk_windowimposter, sdk_windowimposter_DX90)
+
+BEGIN_VS_SHADER(sdk_windowimposter_DX90,
+	"Help for WindowImposter_DX90")
+#endif
 
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM( ENVMAP, SHADER_PARAM_TYPE_TEXTURE, "shadertest/shadertest_env", "envmap" )

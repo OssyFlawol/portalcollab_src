@@ -20,8 +20,14 @@
 extern ConVar r_flashlight_version2;
 
 // FIXME: Need to make a dx9 version so that "CENTROID" works.
-BEGIN_VS_SHADER( SDK_WorldTwoTextureBlend, 
+#if SHADER_OVERRIDE
+DEFINE_FALLBACK_SHADER( SDK_WorldTwoTextureBlend, WorldTwoTextureBlend )
+BEGIN_VS_SHADER( WorldTwoTextureBlend, 
 			  "Help for SDK_WorldTwoTextureBlend" )
+#else
+BEGIN_VS_SHADER(SDK_WorldTwoTextureBlend,
+	"Help for SDK_WorldTwoTextureBlend")
+#endif
 
 BEGIN_SHADER_PARAMS
     SHADER_PARAM_OVERRIDE( BASETEXTURE, SHADER_PARAM_TYPE_TEXTURE, "shadertest/WorldTwoTextureBlend", "iris texture", 0 )

@@ -21,10 +21,19 @@
 static ConVar r_waterforceexpensive( "r_waterforceexpensive", "0", FCVAR_ARCHIVE );
 #endif
 
+#if SHADER_OVERRIDE
 DEFINE_FALLBACK_SHADER( SDK_Water, SDK_Water_DX9_HDR )
+DEFINE_FALLBACK_SHADER( SDK_Water_DX9_HDR, Water_DX9_HDR )
+DEFINE_FALLBACK_SHADER( Water, Water_DX9_HDR )
 
-BEGIN_VS_SHADER( SDK_Water_DX90, 
+BEGIN_VS_SHADER( Water_DX90, 
 			  "Help for SDK_Water" )
+#else
+DEFINE_FALLBACK_SHADER(SDK_Water, SDK_Water_DX9_HDR)
+
+BEGIN_VS_SHADER(SDK_Water_DX90,
+	"Help for SDK_Water")
+#endif
 
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM( REFRACTTEXTURE, SHADER_PARAM_TYPE_TEXTURE, "_rt_WaterRefraction", "" )
@@ -622,8 +631,13 @@ END_SHADER
 //-----------------------------------------------------------------------------
 // This allows us to use a block labelled 'Water_DX9_HDR' in the water materials
 //-----------------------------------------------------------------------------
-BEGIN_INHERITED_SHADER( SDK_Water_DX9_HDR, SDK_Water_DX90,
+#if SHADER_OVERRIDE
+BEGIN_INHERITED_SHADER( Water_DX9_HDR, Water_DX90,
 			  "Help for SDK_Water_DX9_HDR" )
+#else
+BEGIN_INHERITED_SHADER(SDK_Water_DX9_HDR, SDK_Water_DX90,
+	"Help for SDK_Water_DX9_HDR")
+#endif
 
 	SHADER_FALLBACK
 	{

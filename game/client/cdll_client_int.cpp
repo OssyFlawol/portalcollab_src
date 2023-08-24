@@ -151,6 +151,8 @@
 #include "vscript_client.h"
 #endif
 
+#include "materialsystem/ishaderapi.h"
+
 extern vgui::IInputInternal *g_InputInternal;
 
 //=============================================================================
@@ -353,6 +355,41 @@ extern void MapbaseRPC_Shutdown();
 extern void MapbaseRPC_Update( int iType, const char *pMapName );
 #endif
 
+
+struct IShaderSystem
+{
+    virtual void Unknown1() = 0;
+    virtual void Unknown2() = 0;
+    virtual void Unknown3() = 0;
+    virtual void Unknown4() = 0;
+    virtual void Unknown5() = 0;
+    virtual void Unknown6() = 0;
+    virtual void Unknown7() = 0;
+};
+
+struct IShaderSystemInternal : IShaderInit, IShaderSystem
+{
+    virtual void Unknown8() = 0;
+    virtual void Unknown9() = 0;
+    virtual void Unknown10() = 0;
+    virtual void Unknown11() = 0;
+    virtual bool LoadShaderModule(const char *) = 0;
+	virtual bool LoadShaderModule(const char *, const char *, bool ) = 0;
+    virtual void UnloadShaderModule(const char *) = 0;
+};
+
+// Grabs the shader system interface and loads a new shader dll as if it was an engine side dll.
+void LoadModShaders()
+{
+	IShaderSystemInternal* pShaderSystem = static_cast<IShaderSystemInternal*>((IShaderSystem*)materials->QueryInterface("ShaderSystem002"));
+	if (pShaderSystem) {
+		char buf[512];
+		g_pFullFileSystem->RelativePathToFullPath("mod_shader_dx9.dll", "GAMEBIN", buf, sizeof(buf));
+		pShaderSystem->LoadShaderModule(buf, NULL, false);
+	}
+	else
+        Warning("failed to find internal shader system\n");
+}
 
 // Physics system
 bool g_bLevelInitialized;
@@ -1134,10 +1171,15 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	CommandLine()->AppendParm( "+r_hunkalloclightmaps", "0" );
 #endif
 
+
+	// Shader override
+	if (CommandLine()->FindParm("-shaderoverride"))
+		LoadModShaders();
+
 	return true;
 }
 
-bool CHLClient::ReplayInit( CreateInterfaceFn fnReplayFactory )
+bool CHLClient::ReplayInit( CreateInterfaceFn fnReplayFactory )	
 {
 #if defined( REPLAY_ENABLED )
 	if ( !IsPC() )

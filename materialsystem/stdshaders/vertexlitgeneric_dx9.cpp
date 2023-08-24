@@ -16,8 +16,12 @@
 #include "weapon_sheen_pass_helper.h"
 #endif
 
-
-BEGIN_VS_SHADER( SDK_VertexLitGeneric, "Help for SDK_VertexLitGeneric" )
+#if SHADER_OVERRIDE
+DEFINE_FALLBACK_SHADER( SDK_VertexLitGeneric, VertexLitGeneric )
+BEGIN_VS_SHADER( VertexLitGeneric, "Help for SDK_VertexLitGeneric" )
+#else
+BEGIN_VS_SHADER(SDK_VertexLitGeneric, "Help for SDK_VertexLitGeneric")
+#endif
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM( ALBEDO, SHADER_PARAM_TYPE_TEXTURE, "shadertest/BaseTexture", "albedo (Base texture with no baked lighting)" )
 		SHADER_PARAM( COMPRESS, SHADER_PARAM_TYPE_TEXTURE, "shadertest/BaseTexture", "compression wrinklemap" )

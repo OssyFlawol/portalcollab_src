@@ -13,10 +13,19 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-DEFINE_FALLBACK_SHADER( SDK_MonitorScreen, SDK_MonitorScreen_DX9 )
+#if SHADER_OVERRIDE
+DEFINE_FALLBACK_SHADER( SDK_MonitorScreen, MonitorScreen_DX9 )
+DEFINE_FALLBACK_SHADER( MonitorScreen, MonitorScreen_DX9 )
 
-BEGIN_VS_SHADER( SDK_MonitorScreen_DX9,
+BEGIN_VS_SHADER( MonitorScreen_DX9,
 			  "This is a shader that does a contrast/saturation version of base times lightmap." )
+#else
+
+DEFINE_FALLBACK_SHADER(SDK_MonitorScreen, SDK_MonitorScreen_DX9)
+
+BEGIN_VS_SHADER(SDK_MonitorScreen_DX9,
+	"This is a shader that does a contrast/saturation version of base times lightmap.")
+#endif
 
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM( CONTRAST, SHADER_PARAM_TYPE_FLOAT, "0.0", "contrast 0 == normal 1 == color*color" )

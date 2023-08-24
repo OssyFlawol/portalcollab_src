@@ -13,9 +13,14 @@
 #include "SDK_eyeglint_ps20.inc"
 #include "SDK_eyeglint_ps20b.inc"
 
-DEFINE_FALLBACK_SHADER( SDK_EyeGlint, SDK_EyeGlint_dx9 )
-BEGIN_VS_SHADER( SDK_EyeGlint_dx9, "Help for SDK_EyeGlint" )
-
+#if SHADER_OVERRIDE
+DEFINE_FALLBACK_SHADER( SDK_EyeGlint, EyeGlint_dx9 )
+DEFINE_FALLBACK_SHADER( EyeGlint, EyeGlint_dx9 )
+BEGIN_VS_SHADER( EyeGlint_dx9, "Help for SDK_EyeGlint" )
+#else
+DEFINE_FALLBACK_SHADER(SDK_EyeGlint, SDK_EyeGlint_dx9)
+BEGIN_VS_SHADER(SDK_EyeGlint_dx9, "Help for SDK_EyeGlint")
+#endif
 BEGIN_SHADER_PARAMS
 END_SHADER_PARAMS
 

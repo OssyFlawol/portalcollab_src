@@ -25,11 +25,19 @@
 ConVar mat_decalmodulate_flashdraw( "mat_decalmodulate_flashdraw", "0" );
 #endif
 
-DEFINE_FALLBACK_SHADER( SDK_DecalModulate, SDK_DecalModulate_DX9 )
+#if SHADER_OVERRIDE
+DEFINE_FALLBACK_SHADER( SDK_DecalModulate, DecalModulate_DX9 )
+DEFINE_FALLBACK_SHADER( DecalModulate, DecalModulate_DX9 )
 
-BEGIN_VS_SHADER( SDK_DecalModulate_dx9, 
+BEGIN_VS_SHADER( DecalModulate_dx9, 
 			  "Help for SDK_DecalModulate_dx9" )
-			  
+#else
+DEFINE_FALLBACK_SHADER(SDK_DecalModulate, SDK_DecalModulate_DX9)
+
+BEGIN_VS_SHADER(SDK_DecalModulate_dx9,
+	"Help for SDK_DecalModulate_dx9")
+#endif
+
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM( FOGEXPONENT, SHADER_PARAM_TYPE_FLOAT, "0.4", "exponent to tweak fog fade" )
 		SHADER_PARAM( FOGSCALE, SHADER_PARAM_TYPE_FLOAT, "1.0", "scale to tweak fog fade" )

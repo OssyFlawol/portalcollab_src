@@ -17,8 +17,13 @@
 #include "SDK_depthwrite_vs30.inc"
 #endif
 
-BEGIN_VS_SHADER_FLAGS( SDK_DepthWrite, "Help for Depth Write", SHADER_NOT_EDITABLE )
+#if SHADER_OVERRIDE
+DEFINE_FALLBACK_SHADER(SDK_DepthWrite, DepthWrite)
 
+BEGIN_VS_SHADER_FLAGS( DepthWrite, "Help for Depth Write", SHADER_NOT_EDITABLE )
+#else
+BEGIN_VS_SHADER_FLAGS(SDK_DepthWrite, "Help for Depth Write", SHADER_NOT_EDITABLE)
+#endif
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM( ALPHATESTREFERENCE, SHADER_PARAM_TYPE_FLOAT, "", "Alpha reference value" )
 		SHADER_PARAM( COLOR_DEPTH, SHADER_PARAM_TYPE_BOOL, "0", "Write depth as color")

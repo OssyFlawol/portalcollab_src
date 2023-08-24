@@ -23,8 +23,14 @@ ConVar mat_local_contrast_vignette_start_override( "mat_local_contrast_vignette_
 ConVar mat_local_contrast_vignette_end_override( "mat_local_contrast_vignette_end_override", "-1.0" );
 ConVar mat_local_contrast_edge_scale_override( "mat_local_contrast_edge_scale_override", "-1000.0" );
 
-DEFINE_FALLBACK_SHADER( SDK_Engine_Post, SDK_Engine_Post_dx9 )
+#if SHADER_OVERRIDE
+DEFINE_FALLBACK_SHADER(SDK_Engine_Post, SDK_Engine_Post_dx9)
+DEFINE_FALLBACK_SHADER(Engine_Post, Engine_Post_dx9)
 BEGIN_VS_SHADER_FLAGS( SDK_Engine_Post_dx9, "Engine post-processing effects (software anti-aliasing, bloom, color-correction", SHADER_NOT_EDITABLE )
+#else
+DEFINE_FALLBACK_SHADER(SDK_Engine_Post, SDK_Engine_Post_dx9)
+BEGIN_VS_SHADER_FLAGS(SDK_Engine_Post_dx9, "Engine post-processing effects (software anti-aliasing, bloom, color-correction", SHADER_NOT_EDITABLE)
+#endif
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM( FBTEXTURE,				SHADER_PARAM_TYPE_TEXTURE,	"_rt_FullFrameFB",	"Full framebuffer texture" )
 		SHADER_PARAM( AAENABLE,					SHADER_PARAM_TYPE_BOOL,		"0",				"Enable software anti-aliasing" )

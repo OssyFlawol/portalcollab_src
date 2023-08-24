@@ -32,6 +32,11 @@ $Project "game_shader_dx9"
 	"materialsystem\stdshaders\game_shader_dx9_portalcollab.vpc"  [$PORTALCOLLAB]
 }
 
+$Project "mod_shader_dx9"
+{
+	"materialsystem\stdshaders\mod_shader_dx9_portalcollab.vpc"  [$PORTALCOLLAB]
+}
+
 $Project "glview"
 {
 	"utils\glview\glview.vpc" [$WIN32]

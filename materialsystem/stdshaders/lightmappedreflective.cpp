@@ -13,10 +13,16 @@
 #include "SDK_lightmappedreflective_ps20.inc"
 #include "SDK_lightmappedreflective_ps20b.inc"
 
+#if SHADER_OVERRIDE
+DEFINE_FALLBACK_SHADER( SDK_LightmappedReflective, LightmappedReflective_DX90 )
+DEFINE_FALLBACK_SHADER( LightmappedReflective, LightmappedReflective_DX90 )
 
-DEFINE_FALLBACK_SHADER( SDK_LightmappedReflective, SDK_LightmappedReflective_DX90 )
+BEGIN_VS_SHADER( LightmappedReflective_DX90, "Help for SDK_Lightmapped Reflective" )
+#else
+DEFINE_FALLBACK_SHADER(SDK_LightmappedReflective, SDK_LightmappedReflective_DX90)
 
-BEGIN_VS_SHADER( SDK_LightmappedReflective_DX90, "Help for SDK_Lightmapped Reflective" )
+BEGIN_VS_SHADER(SDK_LightmappedReflective_DX90, "Help for SDK_Lightmapped Reflective")
+#endif
 
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM( REFRACTTEXTURE, SHADER_PARAM_TYPE_TEXTURE, "_rt_WaterRefraction", "" )

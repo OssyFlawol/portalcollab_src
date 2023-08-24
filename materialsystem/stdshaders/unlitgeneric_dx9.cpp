@@ -11,7 +11,12 @@
 
 extern ConVar r_flashlight_version2;
 
-BEGIN_VS_SHADER( SDK_UnlitGeneric, "Help for SDK_UnlitGeneric" )
+#if SHADER_OVERRIDE
+DEFINE_FALLBACK_SHADER(SDK_UnlitGeneric, UnlitGeneric)
+BEGIN_VS_SHADER( UnlitGeneric, "Help for SDK_UnlitGeneric" )
+#else
+BEGIN_VS_SHADER(SDK_UnlitGeneric, "Help for SDK_UnlitGeneric")
+#endif
 
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM( ALBEDO, SHADER_PARAM_TYPE_TEXTURE, "shadertest/BaseTexture", "albedo (Base texture with no baked lighting)" )

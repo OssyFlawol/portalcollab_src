@@ -12,8 +12,14 @@
 #include "SDK_lightmappedgeneric_ps20b.inc"
 #include "SDK_lightmappedgeneric_vs20.inc"
 
-BEGIN_VS_SHADER( SDK_LightmappedGeneric,
+#if SHADER_OVERRIDE
+DEFINE_FALLBACK_SHADER(SDK_LightmappedGeneric, LightmappedGeneric)
+BEGIN_VS_SHADER( LightmappedGeneric,
 				 "Help for SDK_LightmappedGeneric" )
+#else
+BEGIN_VS_SHADER(SDK_LightmappedGeneric,
+	"Help for SDK_LightmappedGeneric")
+#endif
 
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM( ALBEDO, SHADER_PARAM_TYPE_TEXTURE, "shadertest/BaseTexture", "albedo (Base texture with no baked lighting)" )
