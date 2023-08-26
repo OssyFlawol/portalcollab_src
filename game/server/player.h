@@ -901,10 +901,14 @@ public:
 	CNetworkHandle( CColorCorrection, m_hColorCorrectionCtrl );		// active FXVolume color correction
 	void InitPostProcessController( void );
 	void InputSetPostProcessController( inputdata_t &inputdata );
+#endif
+
+#undef MAPBASE
+#ifdef MAPBASE // From Alien Swarm SDK
 	void InitColorCorrectionController( void );
 	void InputSetColorCorrectionController( inputdata_t &inputdata );
 #endif
-
+#define MAPBASE 1
 	// Used by env_soundscape_triggerable to manage when the player is touching multiple
 	// soundscape triggers simultaneously.
 	// The one at the HEAD of the list is always the current soundscape for the player.

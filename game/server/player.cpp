@@ -466,10 +466,18 @@ BEGIN_DATADESC( CBasePlayer )
 #ifdef MAPBASE // From Alien Swarm SDK (kind of)
 	DEFINE_INPUTFUNC( FIELD_INPUT, "SetFogController", InputSetFogController ),
 	DEFINE_INPUTFUNC( FIELD_INPUT, "SetPostProcessController", InputSetPostProcessController ),
-	DEFINE_INPUTFUNC( FIELD_INPUT, "SetColorCorrectionController", InputSetColorCorrectionController ),
 #else
 	DEFINE_INPUTFUNC( FIELD_STRING, "SetFogController", InputSetFogController ),
 #endif
+
+#undef MAPBASE
+#ifdef MAPBASE
+	DEFINE_INPUTFUNC( FIELD_INPUT, "SetColorCorrectionController", InputSetColorCorrectionController ),
+#endif
+
+#define MAPBASE 1
+
+
 	DEFINE_INPUTFUNC( FIELD_STRING, "HandleMapEvent", InputHandleMapEvent ),
 #ifdef MAPBASE
 	DEFINE_INPUTFUNC( FIELD_BOOLEAN, "SetSuppressAttacks", InputSetSuppressAttacks ),
@@ -9559,6 +9567,7 @@ void CBasePlayer::InitFogController( void )
 	m_Local.m_PlayerFog.m_hCtrl = FogSystem()->GetMasterFogController();
 }
 
+
 #ifdef MAPBASE // From Alien Swarm SDK
 //-----------------------------------------------------------------------------
 //
@@ -9567,14 +9576,6 @@ void CBasePlayer::InitPostProcessController( void )
 {
 	// Setup with the default master controller.
 	m_hPostProcessCtrl = PostProcessSystem()->GetMasterPostProcessController();
-}
-
-//-----------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------
-void CBasePlayer::InitColorCorrectionController( void )
-{
-	m_hColorCorrectionCtrl = ColorCorrectionSystem()->GetMasterColorCorrection();
 }
 
 //-----------------------------------------------------------------------------
@@ -9599,6 +9600,19 @@ void CBasePlayer::InputSetPostProcessController( inputdata_t &inputdata )
 	}
 }
 
+#endif
+
+
+#undef MAPBASE
+#ifdef MAPBASE
+//-----------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------
+void CBasePlayer::InitColorCorrectionController( void )
+{
+	m_hColorCorrectionCtrl = ColorCorrectionSystem()->GetMasterColorCorrection();
+}
+
 //-----------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------
@@ -9621,7 +9635,10 @@ void CBasePlayer::InputSetColorCorrectionController( inputdata_t &inputdata )
 	}
 
 }
+
 #endif
+
+#define MAPBASE 1
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -10333,7 +10350,7 @@ void CBasePlayer::UpdateFXVolume( void )
 
 		if ( !pColorCorrectionEnt )
 		{
-			pColorCorrectionEnt = ColorCorrectionSystem()->GetMasterColorCorrection();
+		//	pColorCorrectionEnt = ColorCorrectionSystem()->GetMasterColorCorrection(); // Commented out for now - Wonderland_War
 		}
 	}
 	else if ( TheFogVolumes.Count() > 0 )
@@ -10342,7 +10359,7 @@ void CBasePlayer::UpdateFXVolume( void )
 		// This will get us back to using the master fog controller.
 		pFogController = FogSystem()->GetMasterFogController();
 		pPostProcessController = PostProcessSystem()->GetMasterPostProcessController();
-		pColorCorrectionEnt = ColorCorrectionSystem()->GetMasterColorCorrection();
+		//pColorCorrectionEnt = ColorCorrectionSystem()->GetMasterColorCorrection(); // Commented out for now - Wonderland_War
 	}
 
 	if ( pFogController && m_Local.m_PlayerFog.m_hCtrl.Get() != pFogController )

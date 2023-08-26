@@ -638,6 +638,8 @@ void ClientModeShared::Update()
 	}
 }
 
+#undef MAPBASE
+
 #ifdef MAPBASE // From Alien Swarm SDK
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -673,7 +675,10 @@ float ClientModeShared::GetColorCorrectionScale( void ) const
 {
 	return 1.0f;
 }
+
 #endif
+
+#define MAPBASE 1
 
 //-----------------------------------------------------------------------------
 // This processes all input before SV Move messages are sent

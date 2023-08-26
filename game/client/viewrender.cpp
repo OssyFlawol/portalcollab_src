@@ -2129,7 +2129,7 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 		render->SceneBegin();
 
 #ifdef MAPBASE // From Alien Swarm SDK
-		g_pColorCorrectionMgr->UpdateColorCorrection();
+		//g_pColorCorrectionMgr->UpdateColorCorrection();
 #endif
 
 		pRenderContext.GetFrom( materials );

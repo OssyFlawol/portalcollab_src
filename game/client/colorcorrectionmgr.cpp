@@ -8,6 +8,9 @@
 #include "cbase.h"
 #include "tier0/vprof.h"
 #include "colorcorrectionmgr.h"
+
+#undef MAPBASE
+
 #ifdef MAPBASE // From Alien Swarm SDK
 #include "clientmode_shared.h" //"clientmode.h"
 

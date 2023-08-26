@@ -91,11 +91,13 @@ public:
 	virtual void	ProcessInput(bool bActive);
 	virtual bool	CreateMove( float flInputSampleTime, CUserCmd *cmd );
 	virtual void	Update();
+#undef MAPBASE
 #ifdef MAPBASE // From Alien Swarm SDK
 	virtual void	OnColorCorrectionWeightsReset( void );
 	virtual float	GetColorCorrectionScale( void ) const;
 	virtual void	ClearCurrentColorCorrection() { m_pCurrentColorCorrection = NULL; }
 #endif
+#define MAPBASE 1
 
 	// Input
 	virtual int		KeyInput( int down, ButtonCode_t keynum, const char *pszCurrentBinding );

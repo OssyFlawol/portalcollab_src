@@ -17,6 +17,7 @@
 // FIXME: This really should inherit from something	more lightweight
 //------------------------------------------------------------------------------
 
+#undef MAPBASE
 
 //------------------------------------------------------------------------------
 // Purpose : Shadow control entity

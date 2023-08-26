@@ -18,6 +18,7 @@
 // FIXME: This really should inherit from something	more lightweight
 //------------------------------------------------------------------------------
 
+#undef MAPBASE
 
 //------------------------------------------------------------------------------
 // Purpose : Shadow control entity
@@ -210,6 +211,7 @@ void UpdateColorCorrectionVolumes( C_BasePlayer *pPlayer, float ccScale, C_Color
 {
 	for ( int i = 0; i < listCount; i++ )
 	{
+		Assert(pList[i]);
 		pList[i]->Update(pPlayer, ccScale);
 	}
 }

@@ -14,6 +14,8 @@
 
 #include "igamesystem.h"
 
+#undef MAPBASE
+
 #ifdef MAPBASE // From Alien Swarm SDK
 class C_ColorCorrection;
 class C_ColorCorrectionVolume;
@@ -83,6 +85,8 @@ private:
 void UpdateColorCorrectionEntities( C_BasePlayer *pPlayer, float ccScale, C_ColorCorrection **pList, int listCount );
 void UpdateColorCorrectionVolumes( C_BasePlayer *pPlayer, float ccScale, C_ColorCorrectionVolume **pList, int listCount );
 #endif
+
+#define MAPBASE 1
 
 //------------------------------------------------------------------------------
 // Singleton access

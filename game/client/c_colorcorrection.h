@@ -18,6 +18,8 @@
 
 #include "colorcorrectionmgr.h"
 
+#undef MAPBASE
+
 //------------------------------------------------------------------------------
 // Purpose : Color correction entity with radial falloff
 //------------------------------------------------------------------------------
@@ -84,5 +86,7 @@ private:
 
 	ClientCCHandle_t m_CCHandle;
 };
+
+#define MAPBASE 1
 
 #endif

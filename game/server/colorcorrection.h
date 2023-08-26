@@ -18,6 +18,7 @@
 
 #include <string.h>
 #include "cbase.h"
+#undef MAPBASE
 #ifdef MAPBASE // From Alien Swarm SDK
 #include "GameEventListener.h"
 
@@ -143,5 +144,7 @@ private:
 
 CColorCorrectionSystem *ColorCorrectionSystem( void );
 #endif
+
+#define MAPBASE 1
 
 #endif // COLOR_CORRECTION_H

@@ -11,6 +11,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+#undef MAPBASE
+
 #define COLOR_CORRECTION_ENT_THINK_RATE TICK_INTERVAL
 
 static const char *s_pFadeInContextThink = "ColorCorrectionFadeInThink";

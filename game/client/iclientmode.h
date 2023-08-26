@@ -111,11 +111,12 @@ public:
 	virtual float	GetViewModelFOV( void ) = 0;
 
 	virtual bool	CanRecordDemo( char *errorMsg, int length ) const = 0;
-
+#undef MAPBASE
 #ifdef MAPBASE // From Alien Swarm SDK
 	virtual void	OnColorCorrectionWeightsReset( void ) = 0;
 	virtual float	GetColorCorrectionScale( void ) const = 0;
 #endif
+#define MAPBASE 1
 
 	virtual void	ComputeVguiResConditions( KeyValues *pkvConditions ) = 0;
 
