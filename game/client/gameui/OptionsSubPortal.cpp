@@ -32,7 +32,7 @@ COptionsSubPortal::COptionsSubPortal(vgui::Panel *parent) : PropertyPage(parent,
 		this, 
 		"PortalFunnel", 
 		"#GameUI_PortalFunnel", 
-		"cl_player_funnel_into_portals" );
+		"sv_player_funnel_into_portals" );
 
 	m_pPortalDepthCombo = new ComboBox( this, "PortalDepth", 6, false );
 	m_pPortalDepthCombo->AddItem( "#GameUI_PortalDepth0", new KeyValues("PortalDepth", "depth", 0) );
