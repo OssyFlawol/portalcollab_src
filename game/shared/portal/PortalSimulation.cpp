@@ -1925,6 +1925,9 @@ void CPortalSimulator::CreatePolyhedrons( void )
 			for( int i = StaticProps.Count(); --i >= 0; )
 			{
 				ICollideable *pProp = StaticProps[i];
+				
+				if (pProp->GetSolid() == SOLID_NONE)
+					continue;
 
 				CPolyhedron *PolyhedronArray[1024];
 				int iPolyhedronCount = g_StaticCollisionPolyhedronCache.GetStaticPropPolyhedrons( pProp, PolyhedronArray, 1024 );
