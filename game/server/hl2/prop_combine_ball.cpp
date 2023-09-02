@@ -418,6 +418,13 @@ void CPropCombineBall::Spawn( void )
 	m_bWeaponLaunched = false;
 
 	m_flNextDamageTime = gpGlobals->curtime;
+
+	
+	if (!m_bCollideWithPlayers)
+	{
+		PhysClearGameFlags( VPhysicsGetObject(), FVPHYSICS_NO_NPC_IMPACT_DMG );
+		PhysSetGameFlags( VPhysicsGetObject(), FVPHYSICS_DMG_DISSOLVE | FVPHYSICS_HEAVY_OBJECT );
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -546,6 +553,9 @@ void CPropCombineBall::SetMass( float mass )
 //-----------------------------------------------------------------------------
 bool CPropCombineBall::ShouldHitPlayer() const 
 { 
+	if (!m_bCollideWithPlayers)
+		return false;
+
 	if ( GetOwnerEntity() ) 
 	{
 		CAI_BaseNPC *pNPC = GetOwnerEntity()->MyNPCPointer();
@@ -1352,6 +1362,10 @@ void CPropCombineBall::OnHitEntity( CBaseEntity *pHitEntity, float flSpeed, int 
 	bool bIsDissolving = (pHitEntity->GetFlags() & FL_DISSOLVING) != 0;
 	bool bShouldHit = pHitEntity->PassesDamageFilter( info );
 
+	if (pHitEntity->IsPlayer() && !m_bCollideWithPlayers)
+		bShouldHit = false;
+
+
 	//One more check
 	//Combine soldiers are not allowed to hurt their friends with combine balls (they can still shoot and hurt each other with grenades).
 	CBaseCombatCharacter *pBCC = pHitEntity->MyCombatCharacterPointer();
@@ -1591,6 +1605,9 @@ void CPropCombineBall::DeflectTowardEnemy( float flSpeed, int index, gamevcollis
 			if ( !IsAttractiveTarget( list[i] ) )
 				continue;
 
+			if ( list[i]->IsPlayer() && !m_bCollideWithPlayers )
+				continue;
+
 			VectorSubtract( list[i]->WorldSpaceCenter(), vecStartPoint, vecDelta );
 			distance = VectorNormalize( vecDelta );
 
@@ -1632,6 +1649,9 @@ void CPropCombineBall::DeflectTowardEnemy( float flSpeed, int index, gamevcollis
 		for ( int i = 0; i < nCount; i++ )
 		{
 			if ( !IsAttractiveTarget( list[i] ) )
+				continue;
+			
+			if ( list[i]->IsPlayer() && !m_bCollideWithPlayers )
 				continue;
 
 			VectorSubtract( list[i]->WorldSpaceCenter(), vecStartPoint, vecDelta );
@@ -1687,6 +1707,9 @@ void CPropCombineBall::BounceInSpawner( float flSpeed, int index, gamevcollision
 bool CPropCombineBall::IsHittableEntity( CBaseEntity *pHitEntity )
 {
 	if ( pHitEntity->IsWorld() )
+		return false;
+
+	if ( pHitEntity->IsPlayer() && !m_bCollideWithPlayers )
 		return false;
 
 	if ( pHitEntity->GetMoveType() == MOVETYPE_PUSH )
@@ -1821,6 +1844,16 @@ void CPropCombineBall::AnimThink( void )
 {
 	StudioFrameAdvance();
 	SetContextThink( &CPropCombineBall::AnimThink, gpGlobals->curtime + 0.1f, s_pAnimThinkContext );
+}
+
+
+bool CPropCombineBall::ShouldCollide( int collisionGroup, int contentsMask ) const
+{
+	if( !m_bCollideWithPlayers )
+		if ( collisionGroup == COLLISION_GROUP_PLAYER || collisionGroup == COLLISION_GROUP_PLAYER_MOVEMENT )
+			return false;
+	
+	return BaseClass::ShouldCollide( collisionGroup, contentsMask );
 }
 
 //-----------------------------------------------------------------------------

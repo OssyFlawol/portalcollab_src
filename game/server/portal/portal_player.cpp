@@ -33,6 +33,7 @@
 #include "soundenvelope.h"
 #include "ai_speech.h"		// For expressors, vcd playing
 #include "sceneentity.h"	// has the VCD precache function
+#include "prop_combine_ball.h"
 
 // Max mass the player can lift with +use
 #define PORTAL_PLAYER_MAX_LIFT_MASS 85
@@ -1958,7 +1959,8 @@ void CPortal_Player::Event_Killed( const CTakeDamageInfo &info )
 }
 
 int CPortal_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
-{
+{	
+		
 	CTakeDamageInfo inputInfoCopy( inputInfo );
 
 	// If you shoot yourself, make it hurt but push you less
@@ -1970,6 +1972,20 @@ int CPortal_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 
 	CBaseEntity *pAttacker = inputInfoCopy.GetAttacker();
 	CBaseEntity *pInflictor = inputInfoCopy.GetInflictor();
+
+	CPropCombineBall *pBall = dynamic_cast<CPropCombineBall*>(pAttacker);
+	
+	if ( pBall && !pBall->m_bCollideWithPlayers )
+	{
+		return 0;
+	}
+	
+	pBall = dynamic_cast<CPropCombineBall*>(pInflictor);
+
+	if ( pBall && !pBall->m_bCollideWithPlayers )
+	{
+		return 0;
+	}
 
 	bool bIsTurret = false;
 

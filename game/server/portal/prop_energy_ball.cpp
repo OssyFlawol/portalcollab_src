@@ -44,6 +44,9 @@ public:
 	CHandle<CProp_Portal>		m_hTouchedPortal;	// Pointer to the portal we are touched most recently
 	bool						m_bTouchingPortal1;	// Are we touching portal 1
 	bool						m_bTouchingPortal2;	// Are we touching portal 2
+	
+	// Input
+	virtual void InputExplode( inputdata_t &inputdata );
 
 	// Remember the last known direction of travel, incase our velocity is cleared.
 	Vector						m_vLastKnownDirection;
@@ -51,10 +54,23 @@ public:
 	// After portal teleports, we force the life to be at least this number.
 	float						m_fMinLifeAfterPortal;
 
+	virtual bool ShouldCollide( int collisionGroup, int contentsMask ) const;
+		
 	CNetworkVar( bool, m_bIsInfiniteLife );
 	CNetworkVar( float, m_fTimeTillDeath );
 
 	CSoundPatch		*m_pAmbientSound;
+
+	// New optional stuff
+
+	void SetNormalTexture( castable_string_t iszNormalTexture )		{ m_iszNormalTexture = iszNormalTexture; }
+	void SetInfiniteTexture( castable_string_t iszInfiniteTexture )	{ m_iszInfiniteTexture = iszInfiniteTexture; }
+	void SetLoopSound( castable_string_t iszLoopSound )				{ m_iszLoopSound = iszLoopSound; }
+
+	CNetworkVar(string_t, m_iszNormalTexture );
+	CNetworkVar(string_t, m_iszInfiniteTexture );
+
+	string_t	m_iszLoopSound;
 
 };
 
@@ -70,7 +86,20 @@ BEGIN_DATADESC( CPropEnergyBall )
 	DEFINE_FIELD( m_fMinLifeAfterPortal,	FIELD_FLOAT ),
 	DEFINE_FIELD( m_bIsInfiniteLife,		FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_fTimeTillDeath,			FIELD_FLOAT ),
+	// Whoops
+	/*
+	DEFINE_KEYFIELD( m_iszLoopSound, FIELD_STRING, "LoopSound" ),
+	DEFINE_KEYFIELD( m_iszNormalTexture, FIELD_STRING, "NormalTexture" ),
+	DEFINE_KEYFIELD( m_iszInfiniteTexture, FIELD_STRING, "InfiniteTexture" ),
+	DEFINE_KEYFIELD( m_bCollideWithPlayers, FIELD_BOOLEAN, "CollideWithPlayer" ),
+	*/
+	
+	DEFINE_FIELD( m_iszLoopSound, FIELD_STRING ),
+	DEFINE_FIELD( m_iszNormalTexture, FIELD_STRING ),
+	DEFINE_FIELD( m_iszInfiniteTexture, FIELD_STRING ),
+	DEFINE_FIELD( m_bCollideWithPlayers, FIELD_BOOLEAN ),
 
+	DEFINE_INPUTFUNC( FIELD_VOID, "Explode", InputExplode ),
 	DEFINE_SOUNDPATCH( m_pAmbientSound ),
 
 	DEFINE_THINKFUNC( Think ),
@@ -81,6 +110,9 @@ IMPLEMENT_SERVERCLASS_ST( CPropEnergyBall, DT_PropEnergyBall )
 
 	SendPropBool( SENDINFO( m_bIsInfiniteLife ) ),
 	SendPropFloat ( SENDINFO( m_fTimeTillDeath ) ),
+	
+	SendPropStringT( SENDINFO( m_iszNormalTexture ) ),
+	SendPropStringT( SENDINFO( m_iszInfiniteTexture ) ),
 
 END_SEND_TABLE()
 
@@ -98,6 +130,7 @@ void CPropEnergyBall::Precache()
 	PrecacheScriptSound( "EnergyBall.Launch" );
 	PrecacheScriptSound( "EnergyBall.Impact" );
 	PrecacheScriptSound( "EnergyBall.AmbientLoop" );
+	PrecacheScriptSound( m_iszLoopSound.ToCStr() );
 	UTIL_PrecacheDecal( IMPACT_DECAL_NAME, false );
 
 }
@@ -111,7 +144,12 @@ void CPropEnergyBall::CreateSounds()
 
 		CPASAttenuationFilter filter( this );
 
-		m_pAmbientSound = controller.SoundCreate( filter, entindex(), "EnergyBall.AmbientLoop" );
+		const char *pszLoopSound = m_iszLoopSound.ToCStr();
+
+		if (pszLoopSound == NULL || !strcmp("", pszLoopSound))
+			pszLoopSound = "EnergyBall.AmbientLoop";
+
+		m_pAmbientSound = controller.SoundCreate( filter, entindex(), pszLoopSound );
 		controller.Play( m_pAmbientSound, 1.0, 100 );
 	}
 }
@@ -145,6 +183,16 @@ void CPropEnergyBall::Spawn()
 	m_fMinLifeAfterPortal = 5;
 	// Init last known direction to our initial direction
 	GetVelocity( &m_vLastKnownDirection, NULL );
+
+	/*
+	castable_string_t iszNormalBackup("effects/eball_finite_life");	
+	if ( strcmp( "", m_iszNormalTexture.m_Value.ToCStr() ) )
+		m_iszNormalTexture = iszNormalBackup;	
+	
+	castable_string_t iszInfiniteBackup("effects/eball_infinite_life");
+	if ( strcmp( "", m_iszInfiniteTexture.m_Value.ToCStr() ) )
+		m_iszInfiniteTexture = iszInfiniteBackup;
+	*/
 }
 
 void CPropEnergyBall::Activate( void )
@@ -160,6 +208,12 @@ void CPropEnergyBall::Activate( void )
 void CPropEnergyBall::VPhysicsCollision( int index, gamevcollisionevent_t *pEvent )
 {
 	// Skip combine ball's collision, but do everything below it.
+		
+	CBaseEntity *pHitEntity = pEvent->pEntities[!index];
+	if ( pHitEntity->IsPlayer() && !m_bCollideWithPlayers )
+	{
+		return;
+	}
 
 	BaseClass::BaseClass::VPhysicsCollision( index, pEvent );
 
@@ -374,6 +428,10 @@ void CPropEnergyBall::StartTouch( CBaseEntity *pOther )
 		if( pCloned )
 			pOther = pCloned;
 	}
+	
+	// Don't interact with the player.
+	if ( pOther->IsPlayer() && !m_bCollideWithPlayers )
+		return;
 
 	// Kill the player on hit.
 	if ( pOther->IsPlayer() )
@@ -409,6 +467,10 @@ void CPropEnergyBall::StartTouch( CBaseEntity *pOther )
 
 void CPropEnergyBall::EndTouch( CBaseEntity *pOther )
 {
+	// Don't interact with the player.
+	if (pOther->IsPlayer() && !m_bCollideWithPlayers)
+		return;
+
 	CProp_Portal* pPortal = dynamic_cast<CProp_Portal*>(pOther);
 
 	if ( pPortal )
@@ -428,6 +490,22 @@ void CPropEnergyBall::EndTouch( CBaseEntity *pOther )
 	
 }
 
+// Fixes the combine ball explosion effect playing instead of the energy ball one.
+void CPropEnergyBall::InputExplode( inputdata_t &inputdata )
+{
+	SetContextThink( &CPropCombineBall::ExplodeThink, gpGlobals->curtime, "ExplodeTimerContext" );
+}
+
+
+bool CPropEnergyBall::ShouldCollide( int collisionGroup, int contentsMask ) const
+{
+	if( !m_bCollideWithPlayers )
+		if ( collisionGroup == COLLISION_GROUP_PLAYER || collisionGroup == COLLISION_GROUP_PLAYER_MOVEMENT )
+			return false;
+	
+	return BaseClass::ShouldCollide( collisionGroup, contentsMask );
+}
+
 class CEnergyBallLauncher : public CPointCombineBallLauncher
 {
 public:
@@ -437,6 +515,11 @@ public:
 	virtual void SpawnBall();
 	virtual void Precache();
 	virtual void Spawn();
+
+	bool m_bCollideWithPlayers;
+	string_t m_iszNormalTexture;
+	string_t m_iszInfiniteTexture;
+	string_t	m_iszLoopSound;
 
 private:
 	float	m_fBallLifetime;
@@ -453,6 +536,12 @@ BEGIN_DATADESC( CEnergyBallLauncher )
 	
 	DEFINE_KEYFIELD( m_fBallLifetime, FIELD_FLOAT, "BallLifetime" ),
 	DEFINE_KEYFIELD( m_fMinBallLifeAfterPortal, FIELD_FLOAT, "MinLifeAfterPortal" ),
+
+	
+	DEFINE_KEYFIELD( m_iszLoopSound, FIELD_STRING, "LoopSound" ),
+	DEFINE_KEYFIELD( m_iszNormalTexture, FIELD_STRING, "NormalTexture" ),
+	DEFINE_KEYFIELD( m_iszInfiniteTexture, FIELD_STRING, "InfiniteTexture" ),
+	DEFINE_KEYFIELD( m_bCollideWithPlayers, FIELD_BOOLEAN, "CollideWithPlayer" ),
 
 	DEFINE_OUTPUT ( m_OnPostSpawnBall, "OnPostSpawnBall" ),
 
@@ -496,6 +585,11 @@ void CEnergyBallLauncher::SpawnBall()
 
 	vDirection *= flSpeed;
 	pBall->SetAbsVelocity( vDirection );
+
+	pBall->SetLoopSound( m_iszLoopSound.ToCStr() );
+	pBall->SetNormalTexture( m_iszNormalTexture.ToCStr() );
+	pBall->SetInfiniteTexture( m_iszInfiniteTexture.ToCStr() );
+	pBall->m_bCollideWithPlayers = m_bCollideWithPlayers;
 
 	DispatchSpawn(pBall);
 	pBall->Activate();
@@ -581,6 +675,11 @@ static void fire_energy_ball_f( void )
 				
 
 		pBall->SetAbsVelocity( vForward * 400.0f );
+		
+		pBall->SetLoopSound( "EnergyBall.AmbientLoop" );
+		pBall->SetNormalTexture( "effects/eball_finite_life" );
+		pBall->SetInfiniteTexture( "effects/eball_infinite_life" );
+		pBall->m_bCollideWithPlayers = true;
 
 		DispatchSpawn(pBall);
 		pBall->Activate();

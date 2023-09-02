@@ -27,6 +27,9 @@ public:
 	C_PropEnergyBall();
 
 	virtual void	OnDataChanged( DataUpdateType_t updateType );
+	
+	char m_iszNormalTexture[256];
+	char m_iszInfiniteTexture[256];
 
 protected:
 	bool InitMaterials();
@@ -52,6 +55,9 @@ IMPLEMENT_CLIENTCLASS_DT( C_PropEnergyBall, DT_PropEnergyBall, CPropEnergyBall )
 	RecvPropBool( RECVINFO( m_bIsInfiniteLife ) ),
 	RecvPropFloat( RECVINFO( m_fTimeTillDeath ) ),
 
+	RecvPropString( RECVINFO( m_iszNormalTexture ) ),
+	RecvPropString( RECVINFO( m_iszInfiniteTexture ) ),
+
 END_RECV_TABLE()
 
 
@@ -59,6 +65,9 @@ BEGIN_PREDICTION_DATA( C_PropEnergyBall )
 
 	DEFINE_PRED_FIELD( m_bIsInfiniteLife, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_fTimeTillDeath, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
+
+	DEFINE_FIELD( m_iszNormalTexture, FIELD_CHARACTER ),
+	DEFINE_FIELD( m_iszInfiniteTexture, FIELD_CHARACTER ),
 
 END_PREDICTION_DATA()
 
@@ -111,11 +120,13 @@ bool C_PropEnergyBall::InitMaterials()
 	IMaterial* pBodyMat;
 	if ( m_bIsInfiniteLife )
 	{
-		pBodyMat = materials->FindMaterial( "effects/eball_infinite_life", NULL, false );
+
+		pBodyMat = materials->FindMaterial( m_iszInfiniteTexture, NULL, false );
 	}
 	else
 	{
-		pBodyMat = materials->FindMaterial( "effects/eball_finite_life", NULL, false );
+
+		pBodyMat = materials->FindMaterial( m_iszNormalTexture, NULL, false );
 	}
 
 	// If we can find our custom material, use it.

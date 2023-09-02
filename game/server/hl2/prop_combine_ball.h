@@ -61,7 +61,7 @@ public:
 	void ReplaceInSpawner( float flSpeed );
 
 	// Input
-	void InputExplode( inputdata_t &inputdata );
+	virtual void InputExplode( inputdata_t &inputdata );
 	void InputFadeAndRespawn( inputdata_t &inputdata );
 	void InputKill( inputdata_t &inputdata );
 	void InputSocketed( inputdata_t &inputdata );
@@ -116,8 +116,12 @@ public:
 		m_bEmit = bEmit;
 	}
 
+	virtual bool ShouldCollide( int collisionGroup, int contentsMask ) const;
+	
 	void SetOriginalOwner( CBaseEntity *pEntity ) { m_hOriginalOwner = pEntity; }
 	CBaseEntity *GetOriginalOwner() { return m_hOriginalOwner; }
+
+	bool		m_bCollideWithPlayers;
 
 private:
 
