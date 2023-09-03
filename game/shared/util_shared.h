@@ -243,6 +243,67 @@ private:
 // helper
 void DebugDrawLine( const Vector& vecAbsStart, const Vector& vecAbsEnd, int r, int g, int b, bool test, float duration );
 
+// Might be expensive for this to be inline...
+inline void UTIL_DrawDebugBox( Vector vMins, Vector vMaxs )
+{	
+	Vector vCenter = vMins - vMaxs;
+
+	// Mins Height
+	Vector vert1;
+	vert1.x = vMaxs.x;
+	vert1.y = vMins.y;
+	vert1.z = vMins.z;
+
+	Vector vert2;
+	vert2.x = vMins.x;
+	vert2.y = vMaxs.y;
+	vert2.z = vMins.z;
+
+	Vector vert3;
+	vert3.x = vMaxs.x;
+	vert3.y = vMaxs.y;
+	vert3.z = vMins.z;
+
+	Vector vert4 = vMins;
+
+	// Maxs Height
+	Vector vert5;
+	vert5.x = vMins.x;
+	vert5.y = vMaxs.y;
+	vert5.z = vMaxs.z;
+
+	Vector vert6;
+	vert6.x = vMaxs.x;
+	vert6.y = vMins.y;
+	vert6.z = vMaxs.z;
+
+	Vector vert7;
+	vert7.x = vMins.x;
+	vert7.y = vMins.y;
+	vert7.z = vMaxs.z;
+
+	Vector vert8 = vMaxs;
+
+	
+	// Top lines
+	DebugDrawLine( vert1, vert3, 255, 0, 0, true, -1.0f );
+	DebugDrawLine( vert3, vert2, 255, 0, 0, true, -1.0f );
+	DebugDrawLine( vert2, vert4, 255, 0, 0, true, -1.0f );
+	DebugDrawLine( vert4, vert1, 255, 0, 0, true, -1.0f );
+	
+	// Bottom Lines
+	DebugDrawLine( vert5, vert7, 255, 0, 0, true, -1.0f );
+	DebugDrawLine( vert7, vert6, 255, 0, 0, true, -1.0f );
+	DebugDrawLine( vert6, vert8, 255, 0, 0, true, -1.0f );
+	DebugDrawLine( vert8, vert5, 255, 0, 0, true, -1.0f );
+	
+	// In between
+	DebugDrawLine( vert1, vert6, 255, 0, 0, true, -1.0f );
+	DebugDrawLine( vert2, vert5, 255, 0, 0, true, -1.0f );
+	DebugDrawLine( vert3, vert8, 255, 0, 0, true, -1.0f );
+	DebugDrawLine( vert4, vert7, 255, 0, 0, true, -1.0f );
+}
+
 extern ConVar r_visualizetraces;
 
 inline void UTIL_TraceLine( const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, 
