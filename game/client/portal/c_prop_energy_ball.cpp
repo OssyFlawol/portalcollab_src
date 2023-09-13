@@ -119,13 +119,11 @@ bool C_PropEnergyBall::InitMaterials()
 	// If we're an infinite life combine ball, swap out the body material (and the base implementation didnt fail)
 	IMaterial* pBodyMat;
 	if ( m_bIsInfiniteLife )
-	{
-
+	{	
 		pBodyMat = materials->FindMaterial( m_iszInfiniteTexture, NULL, false );
 	}
 	else
 	{
-
 		pBodyMat = materials->FindMaterial( m_iszNormalTexture, NULL, false );
 	}
 

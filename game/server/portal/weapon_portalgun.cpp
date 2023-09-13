@@ -107,6 +107,8 @@ void CWeaponPortalgun::Activate()
 
 	if ( pPlayer )
 	{
+		// The code that existed in the original Portal here is bad and causes the prongs to open & close on map start or level transition. - Wonderland_War
+		/*
 		CBaseEntity *pHeldObject = GetPlayerHeldEntity( pPlayer );
 		// Open prongs only if portal gun is active weapon
 		if (pPlayer->GetActiveWeapon() == this)
@@ -114,6 +116,7 @@ void CWeaponPortalgun::Activate()
 			OpenProngs((pHeldObject) ? (false) : (true));
 			OpenProngs((pHeldObject) ? (true) : (false));
 		}
+		*/
 
 		if( GameRules()->IsMultiplayer() )
 			m_iPortalLinkageGroupID = pPlayer->entindex();

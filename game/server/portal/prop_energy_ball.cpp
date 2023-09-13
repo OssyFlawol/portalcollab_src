@@ -63,8 +63,8 @@ public:
 
 	// New optional stuff
 
-	void SetNormalTexture( castable_string_t iszNormalTexture )		{ m_iszNormalTexture = iszNormalTexture; }
-	void SetInfiniteTexture( castable_string_t iszInfiniteTexture )	{ m_iszInfiniteTexture = iszInfiniteTexture; }
+	void SetNormalTexture( castable_string_t iszNormalTexture )		{ m_iszNormalTexture.m_Value = iszNormalTexture; }
+	void SetInfiniteTexture( castable_string_t iszInfiniteTexture )	{ m_iszInfiniteTexture.m_Value = iszInfiniteTexture; }
 	void SetLoopSound( castable_string_t iszLoopSound )				{ m_iszLoopSound = iszLoopSound; }
 
 	CNetworkVar(string_t, m_iszNormalTexture );
@@ -146,7 +146,7 @@ void CPropEnergyBall::CreateSounds()
 
 		const char *pszLoopSound = m_iszLoopSound.ToCStr();
 
-		if (pszLoopSound == NULL || !strcmp("", pszLoopSound))
+		if ( pszLoopSound == NULL || !strcmp("", pszLoopSound) || (int)pszLoopSound[0] == 0 )
 			pszLoopSound = "EnergyBall.AmbientLoop";
 
 		m_pAmbientSound = controller.SoundCreate( filter, entindex(), pszLoopSound );
@@ -182,17 +182,7 @@ void CPropEnergyBall::Spawn()
 	m_fTimeTillDeath = -1;
 	m_fMinLifeAfterPortal = 5;
 	// Init last known direction to our initial direction
-	GetVelocity( &m_vLastKnownDirection, NULL );
-
-	/*
-	castable_string_t iszNormalBackup("effects/eball_finite_life");	
-	if ( strcmp( "", m_iszNormalTexture.m_Value.ToCStr() ) )
-		m_iszNormalTexture = iszNormalBackup;	
-	
-	castable_string_t iszInfiniteBackup("effects/eball_infinite_life");
-	if ( strcmp( "", m_iszInfiniteTexture.m_Value.ToCStr() ) )
-		m_iszInfiniteTexture = iszInfiniteBackup;
-	*/
+	GetVelocity( &m_vLastKnownDirection, NULL );	
 }
 
 void CPropEnergyBall::Activate( void )
@@ -200,6 +190,12 @@ void CPropEnergyBall::Activate( void )
 	BaseClass::Activate();
 
 	CreateSounds();
+	
+	if ( (int)m_iszNormalTexture.m_Value.ToCStr()[0] == 0 )
+		m_iszNormalTexture = castable_string_t("effects/eball_finite_life");
+	
+	if ( (int)m_iszInfiniteTexture.m_Value.ToCStr()[0] == 0 )
+		m_iszInfiniteTexture = castable_string_t("effects/eball_infinite_life");
 }
 
 //-----------------------------------------------------------------------------
@@ -564,6 +560,12 @@ void CEnergyBallLauncher::Spawn()
 
 void CEnergyBallLauncher::SpawnBall()
 {
+	if ( (int)m_iszNormalTexture.ToCStr()[0] == 0 )
+		m_iszNormalTexture = castable_string_t("effects/eball_finite_life");
+	
+	if ( (int)m_iszInfiniteTexture.ToCStr()[0] == 0 )
+		m_iszInfiniteTexture = castable_string_t("effects/eball_infinite_life");
+	
 	CPropEnergyBall *pBall = static_cast<CPropEnergyBall*>( CreateEntityByName( "prop_energy_ball" ) );
 
 	if ( pBall == NULL )
@@ -675,10 +677,11 @@ static void fire_energy_ball_f( void )
 				
 
 		pBall->SetAbsVelocity( vForward * 400.0f );
-		
+		/*
 		pBall->SetLoopSound( "EnergyBall.AmbientLoop" );
 		pBall->SetNormalTexture( "effects/eball_finite_life" );
 		pBall->SetInfiniteTexture( "effects/eball_infinite_life" );
+		*/
 		pBall->m_bCollideWithPlayers = true;
 
 		DispatchSpawn(pBall);
