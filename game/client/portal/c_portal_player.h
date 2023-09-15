@@ -213,8 +213,9 @@ inline C_Portal_Player *ToPortalPlayer( CBaseEntity *pEntity )
 {
 	if ( !pEntity || !pEntity->IsPlayer() )
 		return NULL;
-
-	return dynamic_cast<C_Portal_Player*>( pEntity );
+	
+	// No need for a dynamic_cast here
+	return static_cast<C_Portal_Player*>( pEntity );
 }
 
 inline C_Portal_Player *GetPortalPlayer( void )

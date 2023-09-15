@@ -51,6 +51,19 @@ public:
 	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();
 
+#ifdef MAPBASE_VSCRIPT
+	DECLARE_ENT_SCRIPTDESC();
+	
+	// Script funcs
+	void Portalgun_SetCanFirePortal1( bool bValue );
+	void Portalgun_SetCanFirePortal2( bool bValue );
+	void Portalgun_SetLinkageGroupID( int iValue );
+	HSCRIPT Script_GetPortalgun( void );
+
+#endif
+
+
+
 	virtual void Precache( void );
 	virtual void CreateSounds( void );
 	virtual void StopLoopingSounds( void );
@@ -246,7 +259,8 @@ inline CPortal_Player *ToPortalPlayer( CBaseEntity *pEntity )
 	if ( !pEntity || !pEntity->IsPlayer() )
 		return NULL;
 
-	return dynamic_cast<CPortal_Player*>( pEntity );
+	// No need for a dynamic_cast here
+	return static_cast<CPortal_Player*>( pEntity );
 }
 
 inline CPortal_Player *GetPortalPlayer( int iPlayerIndex )

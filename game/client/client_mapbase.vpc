@@ -54,6 +54,7 @@ $Project
 			$File	"$SRCDIR\game\shared\mapbase\vscript_singletons.cpp" [$MAPBASE_VSCRIPT]
 			$File	"$SRCDIR\game\shared\mapbase\vscript_singletons.h" [$MAPBASE_VSCRIPT]
 			$File	"$SRCDIR\game\shared\mapbase\vscript_funcs_hl2.cpp" [$MAPBASE_VSCRIPT]
+			$File	"$SRCDIR\game\shared\mapbase\vscript_funcs_portal.cpp" [$MAPBASE_VSCRIPT] // In PortalCollab we have our own vscript functions.
 			$File	"$SRCDIR\game\shared\mapbase\vscript_consts_shared.cpp" [$MAPBASE_VSCRIPT]
 			$File	"$SRCDIR\game\shared\mapbase\vscript_consts_weapons.cpp" [$MAPBASE_VSCRIPT]
 			$File	"$SRCDIR\game\shared\mapbase\weapon_custom_scripted.cpp" [$MAPBASE_VSCRIPT]

@@ -12,6 +12,12 @@
 #define PORTAL_PUSHAWAY_THINK_INTERVAL		(1.0f / 20.0f)
 #include "studio.h"
 
+#ifdef GAME_DLL
+#include "portal_player.h"
+#else
+#include "c_portal_player.h"
+#endif
+
 
 enum
 {

@@ -61,6 +61,10 @@ public:
 #endif
 	
 	virtual bool IsMultiplayer( void );
+	
+#ifdef MAPBASE_VSCRIPT
+	virtual void			RegisterScriptFunctions( void );
+#endif
 
 private:
 	// Rules change for the mega physgun
