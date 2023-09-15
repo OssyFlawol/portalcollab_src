@@ -218,46 +218,15 @@ END_DATADESC()
 #ifdef MAPBASE_VSCRIPT
 
 BEGIN_ENT_SCRIPTDESC( CPortal_Player, CBasePlayer, "Portal Player specific scripts" )
+
 	DEFINE_SCRIPTFUNC_NAMED( SuppressCrosshair, "SuppressCrosshair", "Usage: SuppressCrosshair( bool )" )
-	DEFINE_SCRIPTFUNC_NAMED( Portalgun_SetCanFirePortal1, "Portalgun_SetCanFirePortal1", "Usage: Portalgun_SetCanFirePortal1( bool )" )
-	DEFINE_SCRIPTFUNC_NAMED( Portalgun_SetCanFirePortal2, "Portalgun_SetCanFirePortal2", "Usage: Portalgun_SetCanFirePortal2( bool )" )
-	DEFINE_SCRIPTFUNC_NAMED( Portalgun_SetLinkageGroupID, "Portalgun_SetLinkageGroupID", "Usage: Portalgun_SetLinkageGroupID( int )" )
-	DEFINE_SCRIPTFUNC_NAMED( Script_GetPortalgun, "GetPortalgun", "Usage: GetPortalgun()" )
-	
+	DEFINE_SCRIPTFUNC_NAMED( Script_GetPortalgun, "GetPortalgun", "Usage: GetPortalgun()" )	
 	DEFINE_SCRIPTFUNC_NAMED( EquipSuit, "EquipSuit", "Usage: EquipSuit()" )
 	DEFINE_SCRIPTFUNC_NAMED( RemoveSuit, "RemoveSuit", "Usage: RemoveSuit()" )
 	
 END_SCRIPTDESC();
 
 // Script funcs
-
-void CPortal_Player::Portalgun_SetCanFirePortal1( bool bValue )
-{
-	CWeaponPortalgun *pPortalgun = static_cast<CWeaponPortalgun*>( Weapon_OwnsThisType("weapon_portalgun") );
-	if (!pPortalgun)
-			return;
-
-	pPortalgun->SetCanFirePortal1( bValue );
-}
-
-void CPortal_Player::Portalgun_SetCanFirePortal2( bool bValue )
-{
-	CWeaponPortalgun *pPortalgun = static_cast<CWeaponPortalgun*>( Weapon_OwnsThisType("weapon_portalgun") );
-	if (!pPortalgun)
-			return;
-
-	pPortalgun->SetCanFirePortal2( bValue );
-}
-
-void CPortal_Player::Portalgun_SetLinkageGroupID( int iValue )
-{
-	CWeaponPortalgun *pPortalgun = static_cast<CWeaponPortalgun*>( Weapon_OwnsThisType("weapon_portalgun") );
-	if (!pPortalgun)
-			return;
-
-	pPortalgun->m_iPortalLinkageGroupID = iValue;
-}
-
 
 HSCRIPT CPortal_Player::Script_GetPortalgun( void )
 {

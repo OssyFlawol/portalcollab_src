@@ -73,6 +73,35 @@ END_DATADESC()
 LINK_ENTITY_TO_CLASS( weapon_portalgun, CWeaponPortalgun );
 PRECACHE_WEAPON_REGISTER(weapon_portalgun);
 
+BEGIN_ENT_SCRIPTDESC( CWeaponPortalgun, CBaseCombatWeapon, "Portal gun specific scripts" )
+
+	DEFINE_SCRIPTFUNC_NAMED( SetCanFirePortal1, "SetCanFirePortal1", "Usage: SetCanFirePortal1( bool )" )
+	DEFINE_SCRIPTFUNC_NAMED( SetCanFirePortal2, "SetCanFirePortal2", "Usage: SetCanFirePortal2( bool )" )
+	DEFINE_SCRIPTFUNC_NAMED( SetLinkageGroupID, "SetLinkageGroupID", "Usage: SetLinkageGroupID( int )" )
+	DEFINE_SCRIPTFUNC_NAMED( CanFirePortal1, "CanFirePortal1", "Usage: CanFirePortal1()" )
+	DEFINE_SCRIPTFUNC_NAMED( CanFirePortal2, "CanFirePortal2", "Usage: CanFirePortal2()" )
+	DEFINE_SCRIPTFUNC_NAMED( Script_GetPortal1, "GetPortal1", "Usage: GetPortal1()" )
+	DEFINE_SCRIPTFUNC_NAMED( Script_GetPortal2, "GetPortal2", "Usage: GetPortal2()" )
+
+END_SCRIPTDESC();
+
+void CWeaponPortalgun::SetLinkageGroupID( int iValue )
+{
+	m_iPortalLinkageGroupID = iValue;
+}
+
+HSCRIPT CWeaponPortalgun::Script_GetPortal1( void )
+{	
+	CProp_Portal *pPortal = CProp_Portal::FindPortal( m_iPortalLinkageGroupID, false, true );
+	return ToHScript( pPortal );
+}
+
+HSCRIPT CWeaponPortalgun::Script_GetPortal2( void )
+{
+	CProp_Portal *pPortal = CProp_Portal::FindPortal( m_iPortalLinkageGroupID, true, true );
+	return ToHScript( pPortal );
+}
+
 
 extern ConVar sv_portal_placement_debug;
 extern ConVar sv_portal_placement_never_fail;

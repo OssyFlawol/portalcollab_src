@@ -55,9 +55,6 @@ public:
 	DECLARE_ENT_SCRIPTDESC();
 	
 	// Script funcs
-	void Portalgun_SetCanFirePortal1( bool bValue );
-	void Portalgun_SetCanFirePortal2( bool bValue );
-	void Portalgun_SetLinkageGroupID( int iValue );
 	HSCRIPT Script_GetPortalgun( void );
 
 #endif
