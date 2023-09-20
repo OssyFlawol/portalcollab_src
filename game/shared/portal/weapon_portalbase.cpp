@@ -222,7 +222,7 @@ void CWeaponPortalBase::DrawCrosshair()
 
 	// Find out if this weapon's auto-aimed onto a target
 	bool bOnTarget = ( m_iState == WEAPON_IS_ONTARGET );
-
+	/*
 	if ( player->GetFOV() >= 90 )
 	{ 
 		// normal crosshairs
@@ -242,7 +242,7 @@ void CWeaponPortalBase::DrawCrosshair()
 			crosshair->ResetCrosshair();
 		}
 	}
-	else
+	else*/
 	{ 
 		Color white( 255, 255, 255, 255 );
 
