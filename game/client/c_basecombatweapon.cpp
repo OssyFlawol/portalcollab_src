@@ -288,7 +288,7 @@ void C_BaseCombatWeapon::DrawCrosshair()
 
 	// Find out if this weapon's auto-aimed onto a target
 	bool bOnTarget = ( m_iState == WEAPON_IS_ONTARGET );
-	
+	/*
 	if ( player->GetFOV() >= 90 )
 	{ 
 		// normal crosshairs
@@ -308,7 +308,8 @@ void C_BaseCombatWeapon::DrawCrosshair()
 			crosshair->ResetCrosshair();
 		}
 	}
-	else
+	else*/
+	// Commenting all of this out because having the crosshair arbitrarily change colors when the fov is 90 or greater makes no sense - Wonderland_War
 	{ 
 		Color white( 255, 255, 255, 255 );
 
