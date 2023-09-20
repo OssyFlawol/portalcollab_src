@@ -61,6 +61,7 @@ BEGIN_DATADESC( CProp_Portal )
 	DEFINE_FIELD( m_vPrevForward,		FIELD_VECTOR ),
 	DEFINE_FIELD( m_hMicrophone,		FIELD_EHANDLE ),
 	DEFINE_FIELD( m_hSpeaker,			FIELD_EHANDLE ),
+	DEFINE_KEYFIELD( m_iszScriptPortalPlacedFunction,		FIELD_STRING,		"ScriptPortalPlacedFunction" ),
 
 	DEFINE_SOUNDPATCH( m_pAmbientSound ),
 
@@ -100,9 +101,24 @@ END_SEND_TABLE()
 LINK_ENTITY_TO_CLASS( prop_portal, CProp_Portal );
 
 
+BEGIN_ENT_SCRIPTDESC( CProp_Portal, CBaseAnimating, "Portal Scripts" )
 
+	DEFINE_SCRIPTFUNC_NAMED( SetPortalPlacedScriptFunction, "SetPortalPlacedFunction", "Usage: SetPortalPlacedFunction( string )" )
+	DEFINE_SCRIPTFUNC_NAMED( GetLinkedPortal, "GetLinkedPortal", "Usage: GetLinkedPortal()" )
+	DEFINE_SCRIPTFUNC_NAMED( IsActive, "IsActive", "Usage: IsActive()" )
+	DEFINE_SCRIPTFUNC_NAMED( IsActivedAndLinked, "IsActive", "Usage: IsActive()" )
 
+END_SCRIPTDESC();
 
+void CProp_Portal::SetPortalPlacedScriptFunction( const char* pszFunction )
+{
+	m_iszScriptPortalPlacedFunction = AllocPooledString( pszFunction );
+}
+
+HSCRIPT CProp_Portal::GetLinkedPortal()
+{
+	return ToHScript( m_hLinkedPortal.Get() );
+}
 
 CProp_Portal::CProp_Portal( void )
 {
@@ -365,6 +381,19 @@ void CProp_Portal::DelayedPlacementThink( void )
 
 		}
 	}
+
+	ScriptVariant_t varThinkRetVal;
+	CallScriptFunction( m_iszScriptPortalPlacedFunction.ToCStr(), &varThinkRetVal );
+	/*
+	if ( CallScriptFunction( m_iszScriptPortalPlacedFunction.ToCStr(), &varThinkRetVal ) )
+	{
+		Msg("Called: %s\n", m_iszScriptPortalPlacedFunction.ToCStr() );
+	}
+	else
+	{		
+		Msg("Couldn't find function: %s\n", m_iszScriptPortalPlacedFunction.ToCStr() );
+	}
+	*/
 
 	// Move to new location
 	NewLocation( m_vDelayedPosition, m_qDelayedAngles );
@@ -2067,6 +2096,7 @@ void CProp_Portal::PlacePortal( const Vector &vOrigin, const QAngle &qAngles, fl
 
 void CProp_Portal::NewLocation( const Vector &vOrigin, const QAngle &qAngles )
 {
+
 	// Tell our physics environment to stop simulating it's entities.
 	// Fast moving objects can pass through the hole this frame while it's in the old location.
 	m_PortalSimulator.ReleaseAllEntityOwnership();

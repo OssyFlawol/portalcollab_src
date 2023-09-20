@@ -29,6 +29,14 @@ public:
 	DECLARE_CLASS( CProp_Portal, CBaseAnimating );
 	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();
+	// script description
+	DECLARE_ENT_SCRIPTDESC();
+
+	// script stuff
+	void SetPortalPlacedScriptFunction( const char* pszFunction );
+	bool IsActive() { return m_bActivated; }
+	HSCRIPT GetLinkedPortal();
+	string_t	m_iszScriptPortalPlacedFunction;
 
 							CProp_Portal( void );
 	virtual					~CProp_Portal( void );
