@@ -259,6 +259,8 @@ $Project
 			$File	"gameui\OptionsSubMultiplayer.h"
 			$File	"gameui\OptionsSubPortal.cpp"
 			$File	"gameui\OptionsSubPortal.h"
+			$File	"gameui\OptionsSubPortalCollab.cpp"
+			$File	"gameui\OptionsSubPortalCollab.h"
 			$File	"gameui\OptionsSubVideo.cpp"
 			$File	"gameui\OptionsSubVideo.h"
 			$File	"gameui\OptionsSubVoice.cpp"

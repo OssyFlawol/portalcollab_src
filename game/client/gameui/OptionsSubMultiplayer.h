@@ -14,6 +14,10 @@
 #include <vgui_controls/PropertyPage.h>
 #include <vgui_controls/ImagePanel.h>
 #include "imageutils.h"
+// use the JPEGLIB_USE_STDIO define so that we can read in jpeg's from outside the game directory tree.  For Spray Import.
+#define JPEGLIB_USE_STDIO
+#include "jpeglib/jpeglib.h"
+#undef JPEGLIB_USE_STDIO
 
 class CLabeledCommandComboBox;
 class CBitmapImagePanel;
@@ -109,5 +113,18 @@ private:
 #endif
 	vgui::FileOpenDialog *m_hImportSprayDialog;
 };
+
+
+struct ValveJpegErrorHandler_t 
+{
+	// The default manager
+	struct jpeg_error_mgr	m_Base;
+	// For handling any errors
+	jmp_buf					m_ErrorContext;
+};
+
+static void ValveJpegErrorHandler( j_common_ptr cinfo );
+extern void StripStringOutOfString( const char *pPattern, const char *pIn, char *pOut );
+extern void FindVMTFilesInFolder( const char *pFolder, const char *pFolderName, CLabeledCommandComboBox *cb, int &iCount, int &iInitialItem );
 
 #endif // OPTIONSSUBMULTIPLAYER_H

@@ -29,6 +29,7 @@
 #include "OptionsSubMultiplayer.h"
 #include "OptionsSubDifficulty.h"
 #include "OptionsSubPortal.h"
+#include "OptionsSubPortalCollab.h"
 #ifdef WIN32
 // NVNT haptic configuration dialog
 #include "OptionsSubHaptics.h"
@@ -98,20 +99,25 @@ COptionsDialog::COptionsDialog(vgui::Panel *parent) : PropertyDialog(parent, "Op
 	m_pOptionsSubVideo = new COptionsSubVideo(this);
 	AddPage(m_pOptionsSubVideo, "#GameUI_Video");
 
+	// May as well not include these checks in Portal Collab
+#if 0
 	if ( !ModInfo().IsSinglePlayerOnly() ) 
 	{
 		AddPage(new COptionsSubVoice(this), "#GameUI_Voice");
 	}
 
 	// add the multiplay page last, if we're combo single/multi or just multi
-	// portalcollab isn't multiplayer, but we'll remove this temporarily - Wonderland_War
 
-	//if ( (ModInfo().IsMultiplayerOnly() && !ModInfo().IsSinglePlayerOnly()) ||
-	//	 (!ModInfo().IsMultiplayerOnly() && !ModInfo().IsSinglePlayerOnly()) )
+	if ( (ModInfo().IsMultiplayerOnly() && !ModInfo().IsSinglePlayerOnly()) ||
+		 (!ModInfo().IsMultiplayerOnly() && !ModInfo().IsSinglePlayerOnly()) )
 	{
 		m_pOptionsSubMultiplayer = new COptionsSubMultiplayer(this);
 		AddPage(m_pOptionsSubMultiplayer, "#GameUI_Multiplayer");
 	}
+#endif
+
+	m_pOptionsSubPortalCollab = new COptionsSubPortalCollab(this);
+	AddPage(m_pOptionsSubPortalCollab, "#GameUI_PortalCollab");
 
 //	double s5 = system()->GetCurrentTime();
 //	Msg("COptionsDialog::COptionsDialog(): %.3fms\n", (float)(s5 - s4) * 1000.0f);

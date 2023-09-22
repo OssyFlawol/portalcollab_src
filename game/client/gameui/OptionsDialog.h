@@ -39,6 +39,7 @@ private:
 	class COptionsSubAudio *m_pOptionsSubAudio;
 	class COptionsSubVideo *m_pOptionsSubVideo;
 	vgui::PropertyPage *m_pOptionsSubMultiplayer;
+	vgui::PropertyPage *m_pOptionsSubPortalCollab;
 };
 
 #define OPTIONS_MAX_NUM_ITEMS 15
