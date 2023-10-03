@@ -555,8 +555,14 @@ void CPortal_Player::OnRestore( void )
 //	return false;
 //}
 
+ConVar mp_allow_all_models( "mp_allow_all_models", "0", FCVAR_REPLICATED, "Allows players to change their playermodel to whatever they want with cl_playermodel" );
+
 bool CPortal_Player::ValidatePlayerModel( const char *pModel )
 {
+	// In multiplayer the server should make this optional otherwise it could be too chaotic
+	if ( !g_pGameRules->IsMultiplayer() || mp_allow_all_models.GetBool() )
+		return true;
+
 	int iModels = ARRAYSIZE(g_ppszPortalMPModels);
 	int i;
 
