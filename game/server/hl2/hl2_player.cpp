@@ -638,6 +638,8 @@ CHL2_Player::CHL2_Player()
 
 	m_flArmorReductionTime = 0.0f;
 	m_iArmorReductionFrom = 0;
+
+	m_bFlashlightDisabled = true; // Disabled by default
 }
 
 //
@@ -2598,10 +2600,10 @@ void CHL2_Player::FlashlightTurnOn( void )
 		if( !SuitPower_AddDevice( SuitDeviceFlashlight ) )
 			return;
 	}
-#ifdef HL2_DLL
-	if( !IsSuitEquipped() )
-		return;
-#endif
+//#ifdef HL2_DLL
+//	if( !IsSuitEquipped() )
+//		return;
+//#endif
 
 	AddEffects( EF_DIMLIGHT );
 	EmitSound( "HL2Player.FlashLightOn" );
