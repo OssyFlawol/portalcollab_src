@@ -1215,6 +1215,17 @@ int UTIL_CountNumBitsSet( uint64 nVar )
 	return nNumBits;
 }
 
+char *UTIL_VarArgs( const char *format, ... )
+{
+	va_list		argptr;
+	static char		string[1024];
+	
+	va_start (argptr, format);
+	Q_vsnprintf(string, sizeof(string), format,argptr);
+	va_end (argptr);
+
+	return string;	
+}
 
 int find_day_of_week( struct tm& found_day, int day_of_week, int step )
 {

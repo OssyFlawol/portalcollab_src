@@ -48,8 +48,6 @@ CBasePanel::CBasePanel( vgui::Panel *pParent, const char *panelName, int x, int 
 	m_nTextureSize[ 1 ] = 0;
 }
 
-// This is conflicting with CBasePanel in BasePanel_Simplified, which is weird because it didn't do that in the portalcoop mod - Wonderland_War
-#if 1
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -61,7 +59,6 @@ CBasePanel::~CBasePanel( void )
 		m_nBackgroundMaterial = -1;
 	}
 }
-#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: 

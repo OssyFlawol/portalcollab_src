@@ -11,7 +11,6 @@
 #pragma once
 #endif
 
-#include "BasePanel_Simplified.h"
 #include "vgui_controls/PropertyDialog.h"
 #include "vgui_controls/KeyRepeat.h"
 
@@ -102,8 +101,6 @@ private:
 	bool	m_bControllerOptions;
 	bool	m_bOptionsChanged;
 	bool	m_bOldForceEnglishAudio;
-
-	CFooterPanel		*m_pFooter;
 
 	CUtlVector<OptionData_t*>	*m_pOptions;
 

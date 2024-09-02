@@ -674,6 +674,8 @@ int UTIL_StringFieldToInt( const char *szValue, const char **pValueStrings, int 
 int UTIL_CountNumBitsSet( unsigned int nVar );
 int UTIL_CountNumBitsSet( uint64 nVar );
 
+char *UTIL_VarArgs( PRINTF_FORMAT_STRING const char *format, ... );
+
 //-----------------------------------------------------------------------------
 // Holidays
 //-----------------------------------------------------------------------------

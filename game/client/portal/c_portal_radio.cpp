@@ -19,14 +19,14 @@ public:
 	DECLARE_CLIENTCLASS();
 	DECLARE_CLASS( C_Dinosaur_Signal, C_BaseEntity );
 
-	char  m_szSoundName[128];
+	char  m_iszSoundName[128];
 	float m_flInnerRadius;
 	float m_flOuterRadius;
 	int	  m_nSignalID;
 };
 
 IMPLEMENT_CLIENTCLASS_DT( C_Dinosaur_Signal, DT_DinosaurSignal, CDinosaurSignal )
-	RecvPropString( RECVINFO(m_szSoundName) ), 
+	RecvPropString( RECVINFO(m_iszSoundName) ), 
 	RecvPropFloat( RECVINFO(m_flOuterRadius) ),
 	RecvPropFloat( RECVINFO(m_flInnerRadius) ),
 	RecvPropInt( RECVINFO(m_nSignalID) ),
@@ -142,7 +142,7 @@ void C_Portal_Dinosaur::SetupSounds()
 
 	if ( m_pSignalSound == NULL && 	m_hDinosaur_Signal.Get() != NULL )
 	{
-		m_pSignalSound = CSoundEnvelopeController::GetController().SoundCreate( filter, entindex(), m_hDinosaur_Signal->m_szSoundName );
+		m_pSignalSound = CSoundEnvelopeController::GetController().SoundCreate( filter, entindex(), m_hDinosaur_Signal->m_iszSoundName );
 		//m_pSignalSound = CSoundEnvelopeController::GetController().SoundCreate( filter, entindex(), "UpdateItem.Signal" );
 		CSoundEnvelopeController::GetController().Play( m_pSignalSound, 0.0, PITCH_NORM );
 	}

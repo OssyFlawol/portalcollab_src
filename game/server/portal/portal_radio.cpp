@@ -11,7 +11,23 @@
 //extern CAchievementMgr g_AchievementMgrPortal;
 
 #define RADIO_MODEL_NAME "models/props/radio_reference.mdl"
+#define RADIO_DATA_FILE "scripts/radios.txt"
+
 //#define RADIO_DEBUG_SERVER
+
+static const char *g_pszScanThinkContext = "ScanThinkContext";
+
+KeyValues *LoadRadioData()
+{	
+	KeyValues *radios = new KeyValues( "radios.txt" );
+	if ( !radios->LoadFromFile( g_pFullFileSystem, RADIO_DATA_FILE, "MOD" ) )
+	{
+		AssertMsg( false, "Failed to load radio data" );
+		return NULL;
+	}
+
+	return radios;
+}
 
 class CDinosaurSignal : public CBaseEntity 
 {
@@ -19,29 +35,36 @@ public:
 	DECLARE_DATADESC();
 	DECLARE_SERVERCLASS();
 	DECLARE_CLASS( CDinosaurSignal, CBaseEntity );
+
 	void Spawn();
 	int UpdateTransmitState();
 #if RADIO_DEBUG_SERVER
 	int DrawDebugTextOverlays( void );
 #endif
 
-	CNetworkString( m_szSoundName, 128 );
+	CNetworkVar( string_t, m_iszSoundName );
 	CNetworkVar( float, m_flInnerRadius );
 	CNetworkVar( float, m_flOuterRadius );
 	CNetworkVar( int, m_nSignalID );
+
+	COutputEvent m_OnRadioEntered;
+	COutputEvent m_OnRadioFullyEntered;
 };
 
-LINK_ENTITY_TO_CLASS( updateitem1, CDinosaurSignal );
+LINK_ENTITY_TO_CLASS( info_radio_signal, CDinosaurSignal );
 
 BEGIN_DATADESC( CDinosaurSignal )
-	DEFINE_AUTO_ARRAY( m_szSoundName, FIELD_CHARACTER ),
-	DEFINE_FIELD( m_flOuterRadius, FIELD_FLOAT ),
-	DEFINE_FIELD( m_flInnerRadius, FIELD_FLOAT ),
-	DEFINE_FIELD( m_nSignalID, FIELD_INTEGER ),
+	DEFINE_KEYFIELD( m_iszSoundName, FIELD_STRING, "soundname" ),
+	DEFINE_KEYFIELD( m_flOuterRadius, FIELD_FLOAT, "outerradius" ),
+	DEFINE_KEYFIELD( m_flInnerRadius, FIELD_FLOAT, "innerradius" ),
+	DEFINE_KEYFIELD( m_nSignalID, FIELD_INTEGER, "signalid" ),
+	
+	DEFINE_OUTPUT( m_OnRadioEntered, "OnRadioEntered" ),
+	DEFINE_OUTPUT( m_OnRadioFullyEntered, "OnRadioFullyEntered" ),
 END_DATADESC()
 
 IMPLEMENT_SERVERCLASS_ST( CDinosaurSignal, DT_DinosaurSignal )
-	SendPropString( SENDINFO(m_szSoundName) ), 
+	SendPropStringT( SENDINFO(m_iszSoundName) ), 
 	SendPropFloat( SENDINFO(m_flOuterRadius) ),
 	SendPropFloat( SENDINFO(m_flInnerRadius) ),
 	SendPropInt( SENDINFO(m_nSignalID) ),
@@ -49,7 +72,7 @@ END_SEND_TABLE()
 
 void CDinosaurSignal::Spawn()
 {
-	PrecacheScriptSound( m_szSoundName.Get() );
+	PrecacheScriptSound( m_iszSoundName.Get().ToCStr() );
 	BaseClass::Spawn();
 	SetTransmitState( FL_EDICT_ALWAYS );
 }
@@ -87,16 +110,30 @@ public:
 	virtual bool HasPreferredCarryAnglesForPlayer( CBasePlayer *pPlayer ) { return true; }
 	virtual void Activate();
 
+	void ScanThink();
 
 	CNetworkHandle( CDinosaurSignal, m_hDinosaur_Signal );
 	CNetworkVar( bool, m_bAlreadyDiscovered );
+
+	string_t m_iszSignalName;
+	COutputEvent m_OnSignalReceived;
+	float m_flOldInnerBlend;
+	float m_flOldOuterBlend;
 };
 
-LINK_ENTITY_TO_CLASS( updateitem2, CPortal_Dinosaur );
+LINK_ENTITY_TO_CLASS( prop_radio, CPortal_Dinosaur );
 
 BEGIN_DATADESC( CPortal_Dinosaur )
 	DEFINE_FIELD( m_hDinosaur_Signal, FIELD_EHANDLE ),
 	DEFINE_FIELD( m_bAlreadyDiscovered, FIELD_BOOLEAN ),
+	
+	DEFINE_FIELD( m_flOldInnerBlend, FIELD_FLOAT ),
+	DEFINE_FIELD( m_flOldOuterBlend, FIELD_FLOAT ),
+	
+	DEFINE_KEYFIELD( m_iszSignalName, FIELD_STRING, "signalname" ),
+
+	DEFINE_OUTPUT( m_OnSignalReceived, "OnSignalReceived" ),
+	DEFINE_THINKFUNC( ScanThink ),
 END_DATADESC()
 
 IMPLEMENT_SERVERCLASS_ST( CPortal_Dinosaur, DT_PropDinosaur )
@@ -146,30 +183,110 @@ void CPortal_Dinosaur::Spawn()
 	Precache();
 	KeyValue( "model", RADIO_MODEL_NAME );
 	m_spawnflags |= SF_PHYSPROP_START_ASLEEP;
+	m_flOldInnerBlend = 0.0f;
+	m_flOldOuterBlend = 0.0f;
 	BaseClass::Spawn();
+	SetContextThink( &CPortal_Dinosaur::ScanThink, gpGlobals->curtime, g_pszScanThinkContext );
 }
 
 void CPortal_Dinosaur::Activate( void )
 {
+	BaseClass::Activate();
 	// Find the current completion status of the dinosaurs
-	uint64 fStateFlags = 0;
-	//CBaseAchievement *pTransmissionRecvd = dynamic_cast<CBaseAchievement *>(g_AchievementMgrPortal.GetAchievementByName("PORTAL_TRANSMISSION_RECEIVED"));
-	//if ( pTransmissionRecvd )
-	//{
-	//	fStateFlags = pTransmissionRecvd->GetComponentBits();
-	//}
+	m_hDinosaur_Signal = dynamic_cast<CDinosaurSignal*>( gEntList.FindEntityByName( NULL, m_iszSignalName.ToCStr() ) );
 
+	KeyValues *radios = LoadRadioData();
+	if ( !radios )
+		return;
+
+	//bool bFoundMatchingRadioData = false;
 	if ( m_hDinosaur_Signal != NULL )
 	{
-		uint64 nId = m_hDinosaur_Signal.Get()->m_nSignalID;
-		// See if we're already tripped
-		if ( fStateFlags & ((uint64)1<<nId) )
+		for ( KeyValues *radio = radios->GetFirstSubKey(); radio != NULL; radio = radio->GetNextKey() )
 		{
-			m_bAlreadyDiscovered = true;
+			int id = radio->GetInt("id");
+			bool found = radio->GetBool("found");
+
+			if ( id == m_hDinosaur_Signal.Get()->m_nSignalID )
+			{
+				if ( found )
+				{
+					m_bAlreadyDiscovered = true;
+				}
+				//bFoundMatchingRadioData = true;
+				break;
+			}
+		}		
+	
+		/*if ( !bFoundMatchingRadioData )
+		{
+			Warning("Couldn't find %s in the database! %s and %s will be deleted.\n", GetDebugName(), GetDebugName(), m_hDinosaur_Signal->GetDebugName() );
+			UTIL_Remove( this );
+			UTIL_Remove( m_hDinosaur_Signal );
+		}*/
+	}
+}
+
+void CPortal_Dinosaur::ScanThink()
+{
+	if ( m_hDinosaur_Signal.Get() == NULL )
+	{
+		AssertMsgOnce( 0, "Unpaired radio exists on this map." );
+		SetNextThink( gpGlobals->curtime, g_pszScanThinkContext );
+		return;
+	}
+
+	// How much of the real signal to blend in
+	// 1.0 at > outerrad, 0.0 at < inner rad, blend when in between the two.
+	float flRadiusDelta = fabs( m_hDinosaur_Signal.Get()->m_flOuterRadius - m_hDinosaur_Signal.Get()->m_flInnerRadius );
+	float flDist = m_hDinosaur_Signal.Get()->GetAbsOrigin().DistTo( GetAbsOrigin() );
+	
+	float flOuterBlend = RemapValClamped( flDist, m_hDinosaur_Signal.Get()->m_flOuterRadius, m_hDinosaur_Signal.Get()->m_flOuterRadius-(flRadiusDelta*0.5f), 1.0f, 0.0f );
+	float flInnerBlend = RemapValClamped( flDist, m_hDinosaur_Signal.Get()->m_flOuterRadius-(flRadiusDelta*0.5f), m_hDinosaur_Signal.Get()->m_flInnerRadius, 0.0f, 1.0f );
+	flInnerBlend = Bias( flInnerBlend, 0.1f );
+	
+	if ( flOuterBlend < 1.0f && m_flOldOuterBlend >= 1.0f )
+	{
+		m_hDinosaur_Signal->m_OnRadioEntered.FireOutput( this, this );
+	}
+	// If we've fully heard this signal, mark the achievement
+	if ( flInnerBlend >= 1.0f && m_flOldInnerBlend < 1.0f )
+	{
+		int id = m_hDinosaur_Signal.Get()->m_nSignalID;
+		KeyValues *radios = LoadRadioData();
+		if ( radios )
+		{
+			KeyValues *radiokey = NULL;
+			for ( radiokey = radios->GetFirstSubKey(); radiokey != NULL; radiokey = radiokey->GetNextKey() )
+			{
+				int tempid = radiokey->GetInt("id");
+				if ( tempid == id )
+				{					
+					break; // Found our radio data
+				}
+			}
+
+			if ( radiokey )
+			{
+				radiokey->SetBool("found", true);
+				radios->SaveToFile( g_pFullFileSystem, RADIO_DATA_FILE, "MOD" );
+			}
+		}
+
+		m_OnSignalReceived.FireOutput( this, this );
+		m_hDinosaur_Signal->m_OnRadioFullyEntered.FireOutput( this, this );
+
+		IGameEvent *event = gameeventmanager->CreateEvent( "dinosaur_signal_found" );
+		if ( event )
+		{
+			event->SetInt( "id", id );
+			gameeventmanager->FireEvent( event );
 		}
 	}
 
-	BaseClass::Activate();
+	m_flOldInnerBlend = flInnerBlend;
+	m_flOldOuterBlend = flOuterBlend;
+	SetNextThink( gpGlobals->curtime, g_pszScanThinkContext );
 }
 
 struct radiolocs 
@@ -468,8 +585,8 @@ static CSpawnDinosaurHack g_SpawnRadioHack;
 
 void CSpawnDinosaurHack::LevelInitPreEntity()
 {
-	UTIL_PrecacheOther( "updateitem2", RADIO_MODEL_NAME );
-
+	UTIL_PrecacheOther( "prop_radio", RADIO_MODEL_NAME );
+	
 	ApplyMapSpecificHacks();
 }
 
@@ -563,7 +680,7 @@ CPortal_Dinosaur *CSpawnDinosaurHack::SpawnDinosaur( radiolocs& loc )
 
 	Assert( vSpawnPos != vec3_origin );
 
-	CPortal_Dinosaur *pDinosaur = (CPortal_Dinosaur*)CreateEntityByName( "updateitem2" );
+	CPortal_Dinosaur *pDinosaur = (CPortal_Dinosaur*)CreateEntityByName( "prop_radio" );
 	Assert ( pDinosaur );
 	if ( pDinosaur )
 	{
@@ -577,7 +694,7 @@ CPortal_Dinosaur *CSpawnDinosaurHack::SpawnDinosaur( radiolocs& loc )
 
 CDinosaurSignal *CSpawnDinosaurHack::SpawnSignal( radiolocs& loc )
 {
-	CDinosaurSignal *pSignal = (CDinosaurSignal*)CreateEntityByName( "updateitem1" );
+	CDinosaurSignal *pSignal = (CDinosaurSignal*)CreateEntityByName( "info_radio_signal" );
 	Assert ( pSignal );
 	if ( pSignal )
 	{
@@ -592,7 +709,9 @@ CDinosaurSignal *CSpawnDinosaurHack::SpawnSignal( radiolocs& loc )
 		pSignal->SetAbsOrigin( Vector( loc.soundpos[0], loc.soundpos[1], loc.soundpos[2] ) );
 		pSignal->m_flInnerRadius	= loc.soundinnerrad;
 		pSignal->m_flOuterRadius	= loc.soundouterrad;
-		V_strncpy( pSignal->m_szSoundName.GetForModify(), loc.soundname, 128 );
+		char soundname[128];
+		V_strncpy( soundname, loc.soundname, 128 );
+		pSignal->m_iszSoundName.GetForModify() = AllocPooledString( soundname );
 		pSignal->m_nSignalID		= loc.id;
 		DispatchSpawn( pSignal );
 	}
@@ -615,4 +734,3 @@ void CSpawnDinosaurHack::ApplyMapSpecificHacks()
 		}
 	}
 }
-
