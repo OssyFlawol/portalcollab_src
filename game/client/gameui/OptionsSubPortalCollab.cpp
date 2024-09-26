@@ -56,6 +56,7 @@
 #ifdef WIN32
 #include <io.h>
 #endif
+#include "portal_shareddefs.h"
 
 #if defined( _X360 )
 #include "xbox/xbox_win32stubs.h"
@@ -65,6 +66,97 @@
 #include <tier0/memdbgon.h>
 
 using namespace vgui;
+
+
+class CResetRadioWarningDialog : public Frame
+{
+public:
+	DECLARE_CLASS( CResetRadioWarningDialog, Frame )
+
+	CResetRadioWarningDialog(Panel *parent, const char *panelName, bool showTaskbarIcon = true, bool bPopup = true );
+	~CResetRadioWarningDialog();
+
+protected:
+	
+	virtual void OnCommand( const char *command );
+};
+
+CResetRadioWarningDialog *g_pResetRadioWarningDialog = NULL;
+
+CResetRadioWarningDialog::CResetRadioWarningDialog(Panel *parent, const char *panelName, bool showTaskbarIcon /*=true*/, bool bPopup /*=true*/ ) 
+	: Frame(parent, panelName, showTaskbarIcon, bPopup)
+{
+	SetTitleBarVisible( false );
+	SetSizeable( false );
+	//SetTitle("");
+
+	Label *warningLabel = new Label( this, "warninglabel", "#GameUI_ResetRadios_Message" );
+	
+	SetSize( 384, 128 );
+	MoveToFront();
+	MoveToCenterOfScreen();
+	Activate();
+	
+	warningLabel->SetPos( 16, 20 );
+	warningLabel->SetSize( 360, 24 );
+	//warningLabel->SetWrap( true );
+
+	Button *buttonCancel = new Button( this, "ButtonCancel", "#GameUI_Cancel" );
+	buttonCancel->SetCommand( "Cancel" );
+	Button *buttonReset = new Button( this, "ButtonReset", "#GameUI_Reset" );
+	buttonReset->SetCommand( "Reset" );
+	
+	buttonCancel->SetPos( 200, 96 );
+	buttonReset->SetPos( 120, 96 );
+}
+
+CResetRadioWarningDialog::~CResetRadioWarningDialog()
+{
+	Assert( g_pResetRadioWarningDialog == this );
+	g_pResetRadioWarningDialog = NULL;
+}
+
+void CResetRadioWarningDialog::OnCommand( const char *command )
+{
+	if ( !strcmp( command, "Reset" ) )
+	{
+		KeyValues *radios = LoadRadioData();
+		if ( radios )
+		{
+			for ( KeyValues *radiokey = radios->GetFirstSubKey(); radiokey != NULL; radiokey = radiokey->GetNextKey() )
+			{
+				if ( radiokey )
+				{
+					radiokey->SetBool("found", false);
+				}
+			}
+
+			radios->SaveToFile( g_pFullFileSystem, RADIO_DATA_FILE, "MOD" );
+		}
+
+		Close();
+	}
+	else if ( !strcmp( command, "Cancel" ) )
+	{
+		Close();
+	}
+
+	BaseClass::OnCommand( command );
+}
+
+void CreateResetRadiosWarningDialog( Panel *parent )
+{
+	if ( g_pResetRadioWarningDialog )
+	{
+		g_pResetRadioWarningDialog->MoveToFront();
+		g_pResetRadioWarningDialog->MoveToCenterOfScreen();
+		return;
+	}
+
+	CResetRadioWarningDialog *frame = new CResetRadioWarningDialog( parent, "WarningRadioFrame" );
+	frame->SetDeleteSelfOnClose( true );
+	g_pResetRadioWarningDialog = frame;
+}
 
 
 #define DEFAULT_SUIT_HUE 30
@@ -94,7 +186,7 @@ static ColorItem_t itemlist[]=
 //-----------------------------------------------------------------------------
 // Purpose: Basic help dialog
 //-----------------------------------------------------------------------------
-COptionsSubPortalCollab::COptionsSubPortalCollab(vgui::Panel *parent) : vgui::PropertyPage(parent, "OptionsSubMultiplayer") 
+COptionsSubPortalCollab::COptionsSubPortalCollab(vgui::Panel *parent) : vgui::PropertyPage(parent, "OptionsSubPortalCollab") 
 {
 	Button *cancel = new Button( this, "Cancel", "#GameUI_Cancel" );
 	cancel->SetCommand( "Close" );
@@ -107,6 +199,9 @@ COptionsSubPortalCollab::COptionsSubPortalCollab(vgui::Panel *parent) : vgui::Pr
 
 	Button *advanced = new Button( this, "Advanced", "#GameUI_AdvancedEllipsis" );
 	advanced->SetCommand( "Advanced" );
+	
+	Button *resetRadios = new Button( this, "Reset Radios", "#GameUI_ResetRadios" );
+	resetRadios->SetCommand( "ResetRadios" );
 
 	m_pPrimaryColorSlider = new CCvarSlider( this, "Primary Color Slider", "#GameUI_PrimaryColor",
 		0.0f, 255.0f, "topcolor" );
@@ -180,6 +275,11 @@ COptionsSubPortalCollab::~COptionsSubPortalCollab()
 //-----------------------------------------------------------------------------
 void COptionsSubPortalCollab::OnCommand( const char *command )
 {
+	if ( !strcmp( command, "ResetRadios" ) )
+	{
+		CreateResetRadiosWarningDialog( this );
+	}
+
 	BaseClass::OnCommand( command );
 }
 

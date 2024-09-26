@@ -8,10 +8,10 @@
 #include "igameevents.h"
 #include "soundenvelope.h"
 #include "beamdraw.h"
-
+#include "filesystem.h"
+#include "portal_shareddefs.h"
 
 //#define RADIO_DEBUG_CLIENT
-
 
 class C_Dinosaur_Signal : public C_BaseEntity
 {
@@ -170,7 +170,8 @@ void C_Portal_Dinosaur::ClientThink()
 
 void C_Portal_Dinosaur::ScanForSounds()
 {
-	if ( m_hDinosaur_Signal.Get() == NULL )
+	C_Dinosaur_Signal *pSignal = m_hDinosaur_Signal;
+	if ( pSignal == NULL )
 	{
 		AssertMsgOnce( 0, "Unpaired radio exists on this map." );
 		return;
@@ -178,11 +179,11 @@ void C_Portal_Dinosaur::ScanForSounds()
 
 	// How much of the real signal to blend in
 	// 1.0 at > outerrad, 0.0 at < inner rad, blend when in between the two.
-	float flRadiusDelta = fabs( m_hDinosaur_Signal.Get()->m_flOuterRadius - m_hDinosaur_Signal.Get()->m_flInnerRadius );
-	float flDist = m_hDinosaur_Signal.Get()->GetAbsOrigin().DistTo( GetAbsOrigin() );
+	float flRadiusDelta = fabs( pSignal->m_flOuterRadius - pSignal->m_flInnerRadius );
+	float flDist = pSignal->GetAbsOrigin().DistTo( GetAbsOrigin() );
 
-	float flOuterBlend = RemapValClamped( flDist, m_hDinosaur_Signal.Get()->m_flOuterRadius, m_hDinosaur_Signal.Get()->m_flOuterRadius-(flRadiusDelta*0.5f), 1.0f, 0.0f );
-	float flInnerBlend = RemapValClamped( flDist, m_hDinosaur_Signal.Get()->m_flOuterRadius-(flRadiusDelta*0.5f), m_hDinosaur_Signal.Get()->m_flInnerRadius, 0.0f, 1.0f );
+	float flOuterBlend = RemapValClamped( flDist, pSignal->m_flOuterRadius, pSignal->m_flOuterRadius-(flRadiusDelta*0.5f), 1.0f, 0.0f );
+	float flInnerBlend = RemapValClamped( flDist, pSignal->m_flOuterRadius-(flRadiusDelta*0.5f), pSignal->m_flInnerRadius, 0.0f, 1.0f );
 	flInnerBlend = Bias( flInnerBlend, 0.1f );
 
 	if ( m_pNormalSound )
@@ -195,11 +196,11 @@ void C_Portal_Dinosaur::ScanForSounds()
 	{
 		if ( flOuterBlend <= 0.0f )
 		{
-			flMidBlend = RemapValClamped( flDist, m_hDinosaur_Signal.Get()->m_flOuterRadius-(flRadiusDelta*0.5f), m_hDinosaur_Signal.Get()->m_flInnerRadius, 1.0f, 0.0f );
+			flMidBlend = RemapValClamped( flDist, pSignal->m_flOuterRadius-(flRadiusDelta*0.5f), pSignal->m_flInnerRadius, 1.0f, 0.0f );
 		}
 		else
 		{
-			flMidBlend = RemapValClamped( flDist, m_hDinosaur_Signal.Get()->m_flOuterRadius, m_hDinosaur_Signal.Get()->m_flOuterRadius-(flRadiusDelta*0.5f), 0.0f, 1.0f );
+			flMidBlend = RemapValClamped( flDist, pSignal->m_flOuterRadius, pSignal->m_flOuterRadius-(flRadiusDelta*0.5f), 0.0f, 1.0f );
 			flMidBlend = Bias( flMidBlend, 0.9f );
 		}
 		CSoundEnvelopeController::GetController().SoundChangeVolume( m_pStaticSound, flMidBlend, 0.1f );
@@ -217,8 +218,31 @@ void C_Portal_Dinosaur::ScanForSounds()
 	// If we've fully heard this signal, mark the achievement
 	if ( flInnerBlend >= 1.0f && m_flOldBlend < 1.0f )
 	{
+		int id = pSignal->m_nSignalID;
+		if ( !engine->IsPlayingDemo() ) // Don't save any data if we're running a demo file
+		{
+			KeyValues *radios = LoadRadioData();
+			if ( radios )
+			{
+				KeyValues *radiokey = NULL;
+				for ( radiokey = radios->GetFirstSubKey(); radiokey != NULL; radiokey = radiokey->GetNextKey() )
+				{
+					int tempid = radiokey->GetInt("id");
+					if ( tempid == id )
+					{					
+						break; // Found our radio data
+					}
+				}
+
+				if ( radiokey )
+				{
+					radiokey->SetBool("found", true);
+					radios->SaveToFile( g_pFullFileSystem, RADIO_DATA_FILE, "MOD" );
+				}
+			}
+		}
+
 		m_bDinosaurExtinct = true;
-		int id = m_hDinosaur_Signal.Get()->m_nSignalID;
 
 		IGameEvent *event = gameeventmanager->CreateEvent( "dinosaur_signal_found" );
 		if ( event )

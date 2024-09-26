@@ -193,7 +193,6 @@ static void CC_OpenOptionsDialog2(const CCommand &args)
 	VPANEL GameUiDll = enginevgui->GetPanel(PANEL_GAMEUIDLL);
 	g_pOptionsDialog->Run();
 	g_pOptionsDialog->SetParent(GameUiDll);
-	
 }
 
 static ConCommand OpenOptionsDialog2( "OpenOptionsDialog2", CC_OpenOptionsDialog2, "Open client sided options" );

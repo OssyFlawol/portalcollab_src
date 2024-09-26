@@ -76,4 +76,7 @@ enum PortalChallengeType
 
 extern char *g_ppszPortalPassThroughMaterials[];
 
+#define RADIO_DATA_FILE "scripts/radios.txt"
+extern KeyValues *LoadRadioData();
+
 #endif // PORTAL_SHAREDDEFS_H
