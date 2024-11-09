@@ -500,14 +500,16 @@ float CWeaponPortalgun::TraceFirePortal( bool bPortal2, const Vector &vTraceStar
 		else*/ if ( FClassnameIs( list[i], "trigger_portal_cleanser" ) )
 		{
 			CBaseTrigger *pTrigger = static_cast<CBaseTrigger*>( list[i] );
-
-			if ( pTrigger && !pTrigger->m_bDisabled )
+			if ( pTrigger->m_bDisabled )
+				continue;
+			
+			trace_t cleanserTrace;			
+			enginetrace->ClipRayToCollideable( ray, MASK_ALL, pTrigger->GetCollideable(), &cleanserTrace ); 
+			
+			if ( cleanserTrace.m_pEnt == pTrigger )
 			{
-				Vector vMin;
-				Vector vMax;
-				pTrigger->GetCollideable()->WorldSpaceSurroundingBounds( &vMin, &vMax );
-
-				IntersectRayWithBox( ray.m_Start, ray.m_Delta, vMin, vMax, 0.0f, &tr );
+				// We only want to actually modify tr if we hit a cleanser which is why cleanserTrace is needed
+				enginetrace->ClipRayToCollideable( ray, MASK_ALL, pTrigger->GetCollideable(), &tr );
 
 				tr.plane.normal = -vDirection;
 
