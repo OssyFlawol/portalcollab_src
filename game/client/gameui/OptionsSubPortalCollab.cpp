@@ -71,7 +71,7 @@ using namespace vgui;
 class CResetRadioWarningDialog : public Frame
 {
 public:
-	DECLARE_CLASS( CResetRadioWarningDialog, Frame )
+	typedef Frame BaseClass;
 
 	CResetRadioWarningDialog(Panel *parent, const char *panelName, bool showTaskbarIcon = true, bool bPopup = true );
 	~CResetRadioWarningDialog();
